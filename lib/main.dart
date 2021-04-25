@@ -77,11 +77,11 @@ class _TipMainState extends State<TipMain> {
 
   var inputTotalController = TextEditingController();
 
-  FixedExtentScrollController inputTipController;
+  FixedExtentScrollController inputTipController =
+      FixedExtentScrollController(initialItem: 0);
 
   @override
   void initState() {
-    inputTipController = FixedExtentScrollController(initialItem: 5);
     super.initState();
     _loadPrefs();
   }
@@ -90,13 +90,16 @@ class _TipMainState extends State<TipMain> {
 
   _loadPrefs() async {
     _disableSave = true;
+    await Future.delayed(Duration(seconds: 1));
     final prefs = await SharedPreferences.getInstance();
-    int index = prefs.getInt('tipIndex');
-    if (index != null) {
-      setState(() {
-        // inputTipController.jumpToItem(index);
-      });
-    }
+    // tip index of 5 is default for new user.
+    int index = prefs.getInt('tipIndex') ?? 5;
+    setState(() {
+      // causes an unexpected null value error if we call immediately
+      // added a 1 second future delay to fix.
+      inputTipController.animateToItem(index,
+          duration: Duration(seconds: 2), curve: Curves.elasticOut);
+    });
     _disableSave = false;
   }
 
