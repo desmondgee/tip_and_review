@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'currency.dart';
 
 void main() => runApp(MyApp());
@@ -112,12 +113,45 @@ class _TipMainState extends State<TipMain> {
     });
   }
 
+  bool _isSavable() {
+    return inputTotalController.text.isNotEmpty &&
+        Currency.parseCents(inputTotalController.text) > 0;
+  }
+
+  void _saveToHistory() async {
+    // serialize json {"centipercent", "taxedTotalCents"}
+    Map<String, dynamic> json = {
+      "taxedTotalCents": Currency.parseCents(inputTotalController.text),
+      "centipercent":
+          (Currency.parsePercent(tipPercents[inputTipController.selectedItem]) *
+                  100)
+              .round(),
+    };
+    String jsonString = jsonEncode(json);
+    // save to pref
+    final prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList("history") ?? [];
+    history.add(jsonString);
+    prefs.setStringList("history", history);
+    // clear input text
+    inputTotalController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Tip Main Page')),
       body: SingleChildScrollView(
           child: Column(children: [_youPayBlock(), _basedOnBlock()])),
+      floatingActionButton: _isSavable()
+          ? FloatingActionButton(
+              onPressed: () {
+                _saveToHistory();
+              },
+              child: Icon(Icons.archive),
+              backgroundColor: Colors.teal,
+            )
+          : null,
     );
   }
 
