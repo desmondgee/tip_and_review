@@ -35,14 +35,13 @@ class TipMain extends StatefulWidget {
 
 class _TipMainState extends State<TipMain> {
   //==== State Variables ====
-  // TODO - move state variables up here to top.
-
-  //==== Widgets ====
-
-  //==== Helper Functions ====
-
+  var inputTotalController = TextEditingController();
+  var inputTipController = FixedExtentScrollController(initialItem: 0);
   int navigationIndex = 0;
+  Iterable<Map<String, dynamic>> history;
+  bool _disableSave = false;
 
+  //==== Constants ====
   final textStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w800,
@@ -85,71 +84,11 @@ class _TipMainState extends State<TipMain> {
     "30%",
   ];
 
-  var inputTotalController = TextEditingController();
-
-  FixedExtentScrollController inputTipController =
-      FixedExtentScrollController(initialItem: 0);
-
+  //==== Overrides ====
   @override
   void initState() {
     super.initState();
     _loadPrefs();
-  }
-
-  bool _disableSave = false;
-
-  _loadPrefs() async {
-    _disableSave = true;
-    // prevents unexpected null error from .animateToItem on controller by giving time for the list to render.
-    await Future.delayed(Duration(seconds: 1));
-    final prefs = await SharedPreferences.getInstance();
-    // tip index of 5 is default for new user.
-    int index = prefs.getInt('tipIndex') ?? 5;
-    setState(() {
-      inputTipController.animateToItem(index,
-          duration: Duration(seconds: 2), curve: Curves.elasticOut);
-    });
-    _disableSave = false;
-  }
-
-  _saveTip() async {
-    if (_disableSave) return;
-    final prefs = await SharedPreferences.getInstance();
-    int index = inputTipController.selectedItem;
-    setState(() {
-      // TODO - should replace view with spinner until this state is ready.
-      prefs.setInt('tipIndex', index);
-    });
-  }
-
-  bool _isSavable() {
-    return inputTotalController.text.isNotEmpty &&
-        Currency.parseCents(inputTotalController.text) > 0;
-  }
-
-  void _saveToHistory() async {
-    // serialize json {"centipercent", "taxedTotalCents"}
-    Map<String, dynamic> json = {
-      "taxedTotalCents": Currency.parseCents(inputTotalController.text),
-      "centipercent":
-          (Currency.parsePercent(tipPercents[inputTipController.selectedItem]) *
-                  100)
-              .round(),
-    };
-    String jsonString = jsonEncode(json);
-    // save to pref
-    final prefs = await SharedPreferences.getInstance();
-    List<String> history = prefs.getStringList("history") ?? [];
-    history.add(jsonString);
-    prefs.setStringList("history", history);
-    // clear input text
-    inputTotalController.clear();
-  }
-
-  void _navigationBarHandler(int index) {
-    setState(() {
-      navigationIndex = index;
-    });
   }
 
   @override
@@ -185,6 +124,7 @@ class _TipMainState extends State<TipMain> {
     );
   }
 
+  //==== Widgets ====
   Widget _pickBody() {
     switch (navigationIndex) {
       case 0:
@@ -197,26 +137,6 @@ class _TipMainState extends State<TipMain> {
   Widget _tipCalculatorBody() {
     return SingleChildScrollView(
         child: Column(children: [_youPayBlock(), _basedOnBlock()]));
-  }
-
-  Iterable<Map<String, dynamic>> history;
-
-  void _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> jsonStrings = prefs.getStringList("history") ?? [];
-    Iterable<Map<String, dynamic>> jsonEntries =
-        jsonStrings.map((e) => jsonDecode(e));
-
-    setState(() {
-      history = jsonEntries;
-    });
-  }
-
-  Widget _spinner() {
-    return Center(
-        child: Container(
-            margin: EdgeInsets.only(top: 100),
-            child: CircularProgressIndicator()));
   }
 
   Widget _paymentHistoryBody() {
@@ -368,5 +288,79 @@ class _TipMainState extends State<TipMain> {
                         ])
                       ]),
                 ]))));
+  }
+
+  Widget _spinner() {
+    return Center(
+        child: Container(
+            margin: EdgeInsets.only(top: 100),
+            child: CircularProgressIndicator()));
+  }
+
+  //==== Helper Functions ====
+  bool _isSavable() {
+    return inputTotalController.text.isNotEmpty &&
+        Currency.parseCents(inputTotalController.text) > 0;
+  }
+
+  //==== Async Functions ====
+  void _loadPrefs() async {
+    _disableSave = true;
+    // prevents unexpected null error from .animateToItem on controller by giving time for the list to render.
+    await Future.delayed(Duration(seconds: 1));
+    final prefs = await SharedPreferences.getInstance();
+    // tip index of 5 is default for new user.
+    int index = prefs.getInt('tipIndex') ?? 5;
+    setState(() {
+      inputTipController.animateToItem(index,
+          duration: Duration(seconds: 2), curve: Curves.elasticOut);
+    });
+    _disableSave = false;
+  }
+
+  void _saveTip() async {
+    if (_disableSave) return;
+    final prefs = await SharedPreferences.getInstance();
+    int index = inputTipController.selectedItem;
+    setState(() {
+      // TODO - should replace view with spinner until this state is ready.
+      prefs.setInt('tipIndex', index);
+    });
+  }
+
+  void _saveToHistory() async {
+    // serialize json {"centipercent", "taxedTotalCents"}
+    Map<String, dynamic> json = {
+      "taxedTotalCents": Currency.parseCents(inputTotalController.text),
+      "centipercent":
+          (Currency.parsePercent(tipPercents[inputTipController.selectedItem]) *
+                  100)
+              .round(),
+    };
+    String jsonString = jsonEncode(json);
+    // save to pref
+    final prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList("history") ?? [];
+    history.add(jsonString);
+    prefs.setStringList("history", history);
+    // clear input text
+    inputTotalController.clear();
+  }
+
+  void _navigationBarHandler(int index) {
+    setState(() {
+      navigationIndex = index;
+    });
+  }
+
+  void _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> jsonStrings = prefs.getStringList("history") ?? [];
+    Iterable<Map<String, dynamic>> jsonEntries =
+        jsonStrings.map((e) => jsonDecode(e));
+
+    setState(() {
+      history = jsonEntries;
+    });
   }
 }
