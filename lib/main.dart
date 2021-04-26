@@ -34,6 +34,15 @@ class TipMain extends StatefulWidget {
 }
 
 class _TipMainState extends State<TipMain> {
+  //==== State Variables ====
+  // TODO - move state variables up here to top.
+
+  //==== Widgets ====
+
+  //==== Helper Functions ====
+
+  int navigationIndex = 0;
+
   final textStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w800,
@@ -91,13 +100,12 @@ class _TipMainState extends State<TipMain> {
 
   _loadPrefs() async {
     _disableSave = true;
+    // prevents unexpected null error from .animateToItem on controller by giving time for the list to render.
     await Future.delayed(Duration(seconds: 1));
     final prefs = await SharedPreferences.getInstance();
     // tip index of 5 is default for new user.
     int index = prefs.getInt('tipIndex') ?? 5;
     setState(() {
-      // causes an unexpected null value error if we call immediately
-      // added a 1 second future delay to fix.
       inputTipController.animateToItem(index,
           duration: Duration(seconds: 2), curve: Curves.elasticOut);
     });
@@ -107,8 +115,9 @@ class _TipMainState extends State<TipMain> {
   _saveTip() async {
     if (_disableSave) return;
     final prefs = await SharedPreferences.getInstance();
+    int index = inputTipController.selectedItem;
     setState(() {
-      int index = inputTipController.selectedItem;
+      // TODO - should replace view with spinner until this state is ready.
       prefs.setInt('tipIndex', index);
     });
   }
@@ -137,22 +146,94 @@ class _TipMainState extends State<TipMain> {
     inputTotalController.clear();
   }
 
+  void _navigationBarHandler(int index) {
+    setState(() {
+      navigationIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Tip Main Page')),
-      body: SingleChildScrollView(
-          child: Column(children: [_youPayBlock(), _basedOnBlock()])),
+      body: _pickBody(),
       floatingActionButton: _isSavable()
           ? FloatingActionButton(
               onPressed: () {
                 _saveToHistory();
               },
-              child: Icon(Icons.archive),
+              child: Icon(Icons.bookmarks_outlined),
               backgroundColor: Colors.teal,
+              tooltip: "Save Payments To History",
             )
           : null,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calculate_outlined),
+            label: 'Tip Calculator',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.auto_stories),
+            label: 'Payment History',
+          ),
+        ],
+        currentIndex: navigationIndex,
+        selectedItemColor: Colors.teal,
+        onTap: _navigationBarHandler,
+      ),
     );
+  }
+
+  Widget _pickBody() {
+    switch (navigationIndex) {
+      case 0:
+        return _tipCalculatorBody();
+      default:
+        return _paymentHistoryBody();
+    }
+  }
+
+  Widget _tipCalculatorBody() {
+    return SingleChildScrollView(
+        child: Column(children: [_youPayBlock(), _basedOnBlock()]));
+  }
+
+  Iterable<Map<String, dynamic>> history;
+
+  void _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> jsonStrings = prefs.getStringList("history") ?? [];
+    Iterable<Map<String, dynamic>> jsonEntries =
+        jsonStrings.map((e) => jsonDecode(e));
+
+    setState(() {
+      history = jsonEntries;
+    });
+  }
+
+  Widget _spinner() {
+    return Center(
+        child: Container(
+            margin: EdgeInsets.only(top: 100),
+            child: CircularProgressIndicator()));
+  }
+
+  Widget _paymentHistoryBody() {
+    if (history == null) {
+      _loadHistory();
+      return _spinner();
+    }
+
+    // return _spinner();
+    return ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: history.length,
+        itemBuilder: (BuildContext context, int index) {
+          // int taxedTotalCents = history.elementAt(index)["taxedTotalCents"];
+          // String formattedTaxedTotal = Currency.formatCents(taxedTotalCents);
+          return ListTile(title: Text("HELLO"));
+        });
   }
 
   Widget _youPayBlock() {
@@ -261,8 +342,6 @@ class _TipMainState extends State<TipMain> {
                               child: TextField(
                                   controller: inputTotalController,
                                   keyboardType: TextInputType.number,
-                                  // onChanged: (value) =>
-                                  //     setState(() => inputTotal = value),
                                   // don't need to set any variables b/c controller contains updated value.
                                   onChanged: (value) => setState(() => null),
                                   inputFormatters: [
