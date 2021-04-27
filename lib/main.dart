@@ -39,7 +39,7 @@ class _TipMainState extends State<TipMain> {
   var inputTipController = FixedExtentScrollController(initialItem: 0);
   int previousTipIndex;
   int navigationIndex = 0;
-  Iterable<Map<String, dynamic>> history;
+  List<Map<String, dynamic>> history;
   bool _disableSave = false;
 
   //==== Constants ====
@@ -151,19 +151,20 @@ class _TipMainState extends State<TipMain> {
   }
 
   Widget _paymentHistoryBody() {
-    if (history == null) {
-      _loadHistory();
-      return _spinner();
-    }
-
-    // return _spinner();
     return ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: history.length,
         itemBuilder: (BuildContext context, int index) {
-          // int taxedTotalCents = history.elementAt(index)["taxedTotalCents"];
-          // String formattedTaxedTotal = Currency.formatCents(taxedTotalCents);
-          return ListTile(title: Text("HELLO"));
+          int taxedTotalCents = history[index]["taxedTotalCents"];
+          String formattedTaxedTotal = Currency.formatCents(taxedTotalCents);
+          double tipFraction = history[index]["centipercent"] * 0.01;
+          int tipDecimals = tipFraction % 1 < 0.1 ? 0 : 1;
+          String formattedTip = tipFraction.toStringAsFixed(tipDecimals) + "\%";
+          return ListTile(
+              title: Text("Total With Tax was " +
+                  formattedTaxedTotal +
+                  " and tip was " +
+                  formattedTip));
         });
   }
 
@@ -325,6 +326,9 @@ class _TipMainState extends State<TipMain> {
           duration: Duration(seconds: 2), curve: Curves.elasticOut);
     });
     _disableSave = false;
+
+    String encodedHistory = prefs.getString("history") ?? "[]";
+    history = jsonDecode(encodedHistory).cast<Map<String, dynamic>>();
   }
 
   void _saveTip() async {
@@ -338,21 +342,17 @@ class _TipMainState extends State<TipMain> {
   }
 
   void _saveToHistory() async {
-    // serialize json {"centipercent", "taxedTotalCents"}
-    Map<String, dynamic> json = {
+    Map<String, dynamic> payment = {
       "taxedTotalCents": Currency.parseCents(inputTotalController.text),
       "centipercent":
           (Currency.parsePercent(tipPercents[inputTipController.selectedItem]) *
+                  100 *
                   100)
               .round(),
     };
-    String jsonString = jsonEncode(json);
-    // save to pref
+    history.add(payment);
     final prefs = await SharedPreferences.getInstance();
-    List<String> history = prefs.getStringList("history") ?? [];
-    history.add(jsonString);
-    prefs.setStringList("history", history);
-    // clear input text
+    prefs.setString("history", jsonEncode(history));
     inputTotalController.clear();
   }
 
@@ -362,17 +362,6 @@ class _TipMainState extends State<TipMain> {
     }
     setState(() {
       navigationIndex = newNavigationIndex;
-    });
-  }
-
-  void _loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> jsonStrings = prefs.getStringList("history") ?? [];
-    Iterable<Map<String, dynamic>> jsonEntries =
-        jsonStrings.map((e) => jsonDecode(e));
-
-    setState(() {
-      history = jsonEntries;
     });
   }
 }
