@@ -155,9 +155,10 @@ class _TipMainState extends State<TipMain> {
         padding: const EdgeInsets.all(8),
         itemCount: history.length,
         itemBuilder: (BuildContext context, int index) {
-          int taxedTotalCents = history[index]["taxedTotalCents"];
+          Map payment = history[history.length - index - 1];
+          int taxedTotalCents = payment["taxedTotalCents"];
           String formattedTaxedTotal = Currency.formatCents(taxedTotalCents);
-          double tipFraction = history[index]["centipercent"] * 0.01;
+          double tipFraction = payment["centipercent"] * 0.01;
           int tipDecimals = tipFraction % 1 < 0.1 ? 0 : 1;
           String formattedTip = tipFraction.toStringAsFixed(tipDecimals) + "\%";
           return ListTile(
