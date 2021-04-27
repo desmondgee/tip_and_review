@@ -37,6 +37,7 @@ class _TipMainState extends State<TipMain> {
   //==== State Variables ====
   var inputTotalController = TextEditingController();
   var inputTipController = FixedExtentScrollController(initialItem: 0);
+  int previousTipIndex;
   int navigationIndex = 0;
   Iterable<Map<String, dynamic>> history;
   bool _disableSave = false;
@@ -88,11 +89,21 @@ class _TipMainState extends State<TipMain> {
   @override
   void initState() {
     super.initState();
-    _loadPrefs();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadPrefs();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Fix bug where selectedIndex is lost due to CupertinoPicker being removed from view when switching to another navigation page.
+      if (navigationIndex == 0 && previousTipIndex != null) {
+        inputTipController.jumpToItem(previousTipIndex);
+        previousTipIndex = null;
+      }
+    });
     return Scaffold(
       appBar: AppBar(title: Text('Tip Main Page')),
       body: _pickBody(),
@@ -347,9 +358,12 @@ class _TipMainState extends State<TipMain> {
     inputTotalController.clear();
   }
 
-  void _navigationBarHandler(int index) {
+  void _navigationBarHandler(int newNavigationIndex) {
+    if (navigationIndex == 0) {
+      previousTipIndex = inputTipController.selectedItem;
+    }
     setState(() {
-      navigationIndex = index;
+      navigationIndex = newNavigationIndex;
     });
   }
 
