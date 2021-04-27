@@ -317,8 +317,6 @@ class _TipMainState extends State<TipMain> {
   //==== Async Functions ====
   void _loadPrefs() async {
     _disableSave = true;
-    // prevents unexpected null error from .animateToItem on controller by giving time for the list to render.
-    await Future.delayed(Duration(seconds: 1));
     final prefs = await SharedPreferences.getInstance();
     // tip index of 5 is default for new user.
     int index = prefs.getInt('tipIndex') ?? 5;
