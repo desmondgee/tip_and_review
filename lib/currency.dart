@@ -28,4 +28,9 @@ class Currency {
         RegExp(r'[0-9]+\.?[0-9]*').stringMatch(formattedPercent) ?? '0';
     return double.parse(numbers) * 0.01;
   }
+
+  static int parseCentipercent(String formattedPercent) {
+    // times 100 to convert fraction to percent, then times 100 again to turn into centipercents.
+    return (parsePercent(formattedPercent) * 100 * 100).round();
+  }
 }
