@@ -24,6 +24,9 @@ class TipCalculatorState extends State<TipCalculator> {
   List<Map<String, dynamic>> history;
   final PaymentModel paymentModel;
   final SharedPreferences prefs;
+  int foodRating = 2;
+  int pricing = 2;
+  int experience = 1;
 
   //==== Styles ====
   final textStyle = TextStyle(
@@ -80,8 +83,11 @@ class TipCalculatorState extends State<TipCalculator> {
               )
             : null,
         body: SingleChildScrollView(
-            child:
-                Column(children: [_youPayCardBlock(), _basedOnCardBlock()])));
+            child: Column(children: [
+          _youPayCardBlock(),
+          _basedOnCardBlock(),
+          _notesCardBlock()
+        ])));
   }
 
   //==== Card Blocks ====
@@ -149,6 +155,144 @@ class TipCalculatorState extends State<TipCalculator> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [_taxedTotalInput(), _tipScroller()]),
                 ]))));
+  }
+
+  Widget _notesCardBlock() {
+    return Center(
+        child: SizedBox(
+            width: 500,
+            child: Card(
+                margin: EdgeInsets.all(20.0),
+                child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                    child: Column(children: [
+                      Text("Other Info", style: headerStyle),
+                      Divider(),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                                width: 90,
+                                child: Text(
+                                  "Location:",
+                                  style: textStyle,
+                                  textAlign: TextAlign.center,
+                                )),
+                            SizedBox(
+                                width: 240,
+                                child: TextField(
+                                  style: textStyle,
+                                  textAlign: TextAlign.right,
+                                ))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                                width: 110,
+                                child: Text(
+                                  "Food:",
+                                  style: textStyle,
+                                  textAlign: TextAlign.center,
+                                )),
+                            SizedBox(
+                                width: 90,
+                                child: Text(
+                                  _foodRatingLabel(),
+                                  textAlign: TextAlign.right,
+                                )),
+                            SizedBox(
+                                width: 180,
+                                child: Slider.adaptive(
+                                    value: foodRating * 1.0,
+                                    onChanged: (newRating) {
+                                      setState(
+                                          () => foodRating = newRating.round());
+                                    },
+                                    min: 0,
+                                    max: 4,
+                                    label: _foodRatingLabel(),
+                                    divisions: 4)),
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                                width: 110,
+                                child: Text(
+                                  "Pricing:",
+                                  style: textStyle,
+                                  textAlign: TextAlign.center,
+                                )),
+                            SizedBox(
+                                width: 90,
+                                child: Text(
+                                  _pricingLabel(),
+                                  textAlign: TextAlign.right,
+                                )),
+                            SizedBox(
+                                width: 180,
+                                child: Slider.adaptive(
+                                    value: pricing * 1.0,
+                                    onChanged: (newRating) {
+                                      setState(
+                                          () => pricing = newRating.round());
+                                    },
+                                    min: 0,
+                                    max: 6,
+                                    label: _pricingLabel(),
+                                    divisions: 6))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                                width: 110,
+                                child: Text(
+                                  "Experience:",
+                                  style: textStyle,
+                                  textAlign: TextAlign.center,
+                                )),
+                            SizedBox(
+                                width: 90,
+                                child: Text(
+                                  _experienceLabel(),
+                                  textAlign: TextAlign.right,
+                                )),
+                            SizedBox(
+                                width: 180,
+                                child: Slider.adaptive(
+                                    value: experience * 1.0,
+                                    onChanged: (newRating) {
+                                      setState(
+                                          () => experience = newRating.round());
+                                    },
+                                    min: 0,
+                                    max: 2,
+                                    label: _experienceLabel(),
+                                    divisions: 2))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                                width: 90,
+                                child: Text(
+                                  "Notes:",
+                                  style: textStyle,
+                                  textAlign: TextAlign.center,
+                                )),
+                            SizedBox(
+                                width: 240,
+                                child: TextField(
+                                    style: textStyle,
+                                    textAlign: TextAlign.right,
+                                    keyboardType: TextInputType.multiline,
+                                    minLines: 1,
+                                    maxLines: null))
+                          ]),
+                    ])))));
   }
 
   //==== Card Subwidgets ====
@@ -230,5 +374,55 @@ class TipCalculatorState extends State<TipCalculator> {
       history.add(payment);
       prefs.setString("history", jsonEncode(history));
     });
+  }
+
+  String _foodRatingLabel() {
+    switch (foodRating) {
+      case 4:
+        return "Amazing";
+      case 3:
+        return "Very Good";
+      case 2:
+        return "Good";
+      case 1:
+        return "Decent";
+      default:
+        return "Bad";
+    }
+  }
+
+  String _pricingLabel() {
+    switch (pricing) {
+      case 6:
+        return "\$100+";
+      case 5:
+        return "\$50 to \$100";
+      case 4:
+        return "\$30 to \$50";
+      case 3:
+        return "\$20 to \$30";
+      case 2:
+        return "\$15 to \$20";
+      case 1:
+        return "\$10 to \$15";
+      default:
+        return "\$0 to \$10";
+    }
+  }
+
+  String _experienceLabel() {
+    switch (experience) {
+      case 2:
+        // return "👍";
+        // return "🤩";
+        return '😇';
+      case 1:
+        return "👌";
+      // return '🤷';
+      default:
+        // return "👎";
+        // return "🤬";
+        return '👿';
+    }
   }
 }
