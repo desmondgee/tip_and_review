@@ -9,22 +9,23 @@ import '../model/payment.dart';
 class TipCalculator extends StatefulWidget {
   final List<Map<String, dynamic>> history;
   final PaymentModel paymentModel;
-  TipCalculator(this.paymentModel, this.history);
+  final SharedPreferences prefs;
+  TipCalculator({this.paymentModel, this.prefs, this.history});
 
   @override
-  TipCalculatorState createState() => TipCalculatorState(paymentModel, history);
+  TipCalculatorState createState() =>
+      TipCalculatorState(paymentModel, prefs, history);
 }
 
 class TipCalculatorState extends State<TipCalculator> {
   //==== State Variables ====
-  // can i remove this boolean? maybe animateToItem has this built-in and doesn't trigger changes.
-  bool _disableSave = true;
   var inputTotalController = TextEditingController();
   var inputTipController = FixedExtentScrollController(initialItem: 0);
   List<Map<String, dynamic>> history;
   final PaymentModel paymentModel;
+  final SharedPreferences prefs;
 
-  //==== Constants ====
+  //==== Styles ====
   final textStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w800,
@@ -53,7 +54,7 @@ class TipCalculatorState extends State<TipCalculator> {
   );
 
   //==== Overrides ====
-  TipCalculatorState(this.paymentModel, this.history);
+  TipCalculatorState(this.paymentModel, this.prefs, this.history);
 
   @override
   void initState() {
@@ -62,14 +63,6 @@ class TipCalculatorState extends State<TipCalculator> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       inputTotalController.text = paymentModel.formattedTaxedTotal();
       inputTipController.jumpToItem(paymentModel.tipPercentIndex);
-      // final prefs = await SharedPreferences.getInstance();
-      // // tip index of 5 is default for new user.
-      // int index = prefs.getInt('tipIndex') ?? 5;
-      // setState(() {
-      //   inputTipController.animateToItem(index,
-      //       duration: Duration(seconds: 2), curve: Curves.elasticOut);
-      // });
-      // _disableSave = false;
     });
   }
 
@@ -87,11 +80,12 @@ class TipCalculatorState extends State<TipCalculator> {
               )
             : null,
         body: SingleChildScrollView(
-            child: Column(children: [_youPayBlock(), _basedOnBlock()])));
+            child:
+                Column(children: [_youPayCardBlock(), _basedOnCardBlock()])));
   }
 
-  //---- Sections ----
-  Widget _youPayBlock() {
+  //==== Card Blocks ====
+  Widget _youPayCardBlock() {
     return Center(
         child: SizedBox(
             width: 500,
@@ -142,7 +136,52 @@ class TipCalculatorState extends State<TipCalculator> {
                     ])))));
   }
 
-  Widget _basedOnBlock() {
+  Widget _basedOnCardBlock() {
+    return Center(
+        child: SizedBox(
+            width: 500,
+            child: Card(
+                margin: EdgeInsets.all(20.0),
+                child: Column(children: [
+                  Text("Based On", style: headerStyle),
+                  Divider(),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [_taxedTotalInput(), _tipScroller()]),
+                ]))));
+  }
+
+  //==== Card Subwidgets ====
+  Widget _taxedTotalInput() {
+    return Column(children: [
+      Text("After Tax Total", style: textStyle),
+      SizedBox(
+          width: 100,
+          child: TextField(
+              controller: inputTotalController,
+              keyboardType: TextInputType.number,
+              // don't need to set any variables b/c controller contains updated value.
+              onChanged: (value) =>
+                  setState(() => paymentModel.setTaxedTotal(value)),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                TextInputFormatter.withFunction((oldValue, newValue) {
+                  String text = Currency.reformatDollars(newValue.text);
+                  return TextEditingValue(
+                      text: text,
+                      selection: TextSelection.collapsed(
+                          // offset > length safe in chrome but crashes android.
+                          offset: text.length));
+                })
+              ],
+              decoration: InputDecoration(
+                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
+                  border: OutlineInputBorder(),
+                  hintText: "\$0.00")))
+    ]);
+  }
+
+  Widget _tipScroller() {
     final tipTiles = PaymentModel.tipPercents.map(
       (String value) {
         return ListTile(
@@ -159,63 +198,20 @@ class TipCalculatorState extends State<TipCalculator> {
       tiles: tipTiles,
     ).toList();
 
-    final scrollerVersion3 = SizedBox(
-        width: 100,
-        height: 150,
-        child: CupertinoPicker(
-          itemExtent: 44,
-          children: dividedTipTiles,
-          scrollController: inputTipController,
-          onSelectedItemChanged: (newIndex) => setState(() {
-            paymentModel.setTipPercentIndex(newIndex);
-          }),
-        ));
-
-    return Center(
-        child: SizedBox(
-            width: 500,
-            child: Card(
-                margin: EdgeInsets.all(20.0),
-                child: Column(children: [
-                  Text("Based On", style: headerStyle),
-                  Divider(),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(children: [
-                          Text("After Tax Total", style: textStyle),
-                          SizedBox(
-                              width: 100,
-                              child: TextField(
-                                  controller: inputTotalController,
-                                  keyboardType: TextInputType.number,
-                                  // don't need to set any variables b/c controller contains updated value.
-                                  onChanged: (value) => setState(
-                                      () => paymentModel.setTaxedTotal(value)),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    TextInputFormatter.withFunction(
-                                        (oldValue, newValue) {
-                                      String text = Currency.reformatDollars(
-                                          newValue.text);
-                                      return TextEditingValue(
-                                          text: text,
-                                          selection: TextSelection.collapsed(
-                                              // offset > length safe in chrome but crashes android.
-                                              offset: text.length));
-                                    })
-                                  ],
-                                  decoration: InputDecoration(
-                                      // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                                      border: OutlineInputBorder(),
-                                      hintText: "\$0.00")))
-                        ]),
-                        Column(children: [
-                          Text("After Tax Tip", style: textStyle),
-                          scrollerVersion3
-                        ])
-                      ]),
-                ]))));
+    return Column(children: [
+      Text("After Tax Tip", style: textStyle),
+      SizedBox(
+          width: 100,
+          height: 150,
+          child: CupertinoPicker(
+            itemExtent: 44,
+            children: dividedTipTiles,
+            scrollController: inputTipController,
+            onSelectedItemChanged: (newIndex) => setState(() {
+              paymentModel.setTipPercentIndex(newIndex);
+            }),
+          ))
+    ]);
   }
 
   //==== Helper Functions ====

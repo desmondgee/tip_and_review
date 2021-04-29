@@ -43,14 +43,11 @@ class _TipMainState extends State<TipMain> {
   SharedPreferences prefs;
   PaymentModel paymentModel = PaymentModel();
 
-  //==== Constants ====
-
   //==== Overrides ====
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      //TODO: pass this into TipCalculator
       prefs = await SharedPreferences.getInstance();
       String encodedHistory = prefs.getString("history") ?? "[]";
       setState(() {
@@ -64,17 +61,10 @@ class _TipMainState extends State<TipMain> {
   Widget build(BuildContext context) {
     if (!prefsLoaded) return _spinner();
 
-    TipCalculator tipCalculator = TipCalculator(paymentModel, history);
-    PaymentHistory paymentHistory = PaymentHistory(history, prefs);
-    Widget body = navigationIndex == 0 ? tipCalculator : paymentHistory;
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   // Fix bug where selectedIndex is lost due to CupertinoPicker being removed from view when switching to another navigation page.
-    //   if (navigationIndex == 0 && previousTipIndex != null) {
-    //     inputTipController.jumpToItem(previousTipIndex);
-    //     previousTipIndex = null;
-    //   }
-    // });
+    Widget body = navigationIndex == 0
+        ? TipCalculator(
+            paymentModel: paymentModel, prefs: prefs, history: history)
+        : PaymentHistory(history, prefs);
 
     return Scaffold(
       appBar: AppBar(title: Text('Tip Main Page')),
@@ -92,7 +82,9 @@ class _TipMainState extends State<TipMain> {
         ],
         currentIndex: navigationIndex,
         selectedItemColor: Colors.teal,
-        onTap: _navigationBarHandler,
+        onTap: (index) => setState(() {
+          navigationIndex = index;
+        }),
       ),
     );
   }
@@ -103,15 +95,5 @@ class _TipMainState extends State<TipMain> {
         child: Container(
             margin: EdgeInsets.only(top: 100),
             child: CircularProgressIndicator()));
-  }
-
-  //==== Async Functions ====
-  void _navigationBarHandler(int newNavigationIndex) {
-    // if (navigationIndex == 0) {
-    //   previousTipIndex = inputTipController.selectedItem;
-    // }
-    setState(() {
-      navigationIndex = newNavigationIndex;
-    });
   }
 }
