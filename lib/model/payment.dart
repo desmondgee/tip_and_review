@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import '../currency.dart';
 
-class PaymentModel with ChangeNotifier {
+class PaymentModel {
   static final tipPercents = <String>[
     "0%",
     "5%",

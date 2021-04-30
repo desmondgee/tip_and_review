@@ -6,11 +6,13 @@ import 'dart:convert';
 import '../currency.dart';
 import '../model/payment.dart';
 import '../style.dart';
+import 'page_dots.dart';
 
 class TipCalculator extends StatefulWidget {
   final List<Map<String, dynamic>> history;
   final PaymentModel paymentModel;
   final SharedPreferences prefs;
+  final int pages = 3;
   TipCalculator({this.paymentModel, this.prefs, this.history});
 
   @override
@@ -22,12 +24,14 @@ class TipCalculatorState extends State<TipCalculator> {
   //==== State Variables ====
   var inputTotalController = TextEditingController();
   var inputTipController = FixedExtentScrollController(initialItem: 0);
+  var pageController;
   List<Map<String, dynamic>> history;
   final PaymentModel paymentModel;
   final SharedPreferences prefs;
   int foodRating = 2;
   int pricing = 2;
   int experience = 1;
+  int pageIndex = 0;
 
   //==== Overrides ====
   TipCalculatorState(this.paymentModel, this.prefs, this.history);
@@ -35,6 +39,9 @@ class TipCalculatorState extends State<TipCalculator> {
   @override
   void initState() {
     super.initState();
+
+    pageController = PageController(
+        initialPage: widget.pages * 100); // can't scroll below 0 fix.
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       inputTotalController.text = paymentModel.formattedTaxedTotal();
@@ -44,6 +51,8 @@ class TipCalculatorState extends State<TipCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    print("tip calculator page index - " + pageIndex.toString());
+
     return Scaffold(
         floatingActionButton: _isSavable()
             ? FloatingActionButton(
@@ -55,12 +64,43 @@ class TipCalculatorState extends State<TipCalculator> {
                 tooltip: "Save Payments To History",
               )
             : null,
-        body: SingleChildScrollView(
-            child: Column(children: [
-          _youPayCardBlock(),
-          _basedOnCardBlock(),
-          _notesCardBlock()
-        ])));
+        body: Column(children: [
+          PageDots(index: pageIndex, length: widget.pages),
+          Expanded(
+              child: PageView.builder(
+                  controller: pageController,
+                  onPageChanged: (value) =>
+                      setState(() => pageIndex = value % widget.pages),
+                  itemBuilder: (_, i) {
+                    switch (i % 3) {
+                      case 0:
+                        return _page1();
+                      case 1:
+                        return _page2();
+                      default:
+                        return _page3();
+                    }
+                  }))
+        ]));
+  }
+
+  //==== Pages ====
+  Widget _page1() {
+    return SingleChildScrollView(
+        child: Column(children: [
+      Center(child: Text("Tip Calculator Version A", style: Style.headerStyle)),
+      _youPayCardBlock(),
+      _basedOnCardBlock(),
+      _notesCardBlock(),
+    ]));
+  }
+
+  Widget _page2() {
+    return Center(child: Text("Page 2"));
+  }
+
+  Widget _page3() {
+    return Center(child: Text("Page 3"));
   }
 
   //==== Card Blocks ====
@@ -83,14 +123,14 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 140,
                                 child: Text(
                                   "Tip Amount:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 140,
                                 child: Text(
                                   paymentModel.formattedTipTotal(),
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.right,
                                 ))
                           ]),
@@ -101,14 +141,14 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 140,
                                 child: Text(
                                   "Total Amount:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 140,
                                 child: Text(
                                   paymentModel.formattedGrandTotal(),
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.right,
                                 ))
                           ]),
@@ -149,13 +189,13 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 90,
                                 child: Text(
                                   "Location:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 240,
                                 child: TextField(
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.right,
                                 ))
                           ]),
@@ -166,13 +206,14 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 110,
                                 child: Text(
                                   "Food:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 90,
                                 child: Text(
                                   _foodRatingLabel(),
+                                  style: Style.textStyle,
                                   textAlign: TextAlign.right,
                                 )),
                             SizedBox(
@@ -185,7 +226,6 @@ class TipCalculatorState extends State<TipCalculator> {
                                     },
                                     min: 0,
                                     max: 4,
-                                    label: _foodRatingLabel(),
                                     divisions: 4)),
                           ]),
                       Row(
@@ -195,13 +235,14 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 110,
                                 child: Text(
                                   "Pricing:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 90,
                                 child: Text(
                                   _pricingLabel(),
+                                  style: Style.textStyle,
                                   textAlign: TextAlign.right,
                                 )),
                             SizedBox(
@@ -214,7 +255,6 @@ class TipCalculatorState extends State<TipCalculator> {
                                     },
                                     min: 0,
                                     max: 6,
-                                    label: _pricingLabel(),
                                     divisions: 6))
                           ]),
                       Row(
@@ -224,13 +264,14 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 110,
                                 child: Text(
                                   "Experience:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 90,
                                 child: Text(
                                   _experienceLabel(),
+                                  style: Style.textStyle,
                                   textAlign: TextAlign.right,
                                 )),
                             SizedBox(
@@ -243,7 +284,6 @@ class TipCalculatorState extends State<TipCalculator> {
                                     },
                                     min: 0,
                                     max: 2,
-                                    label: _experienceLabel(),
                                     divisions: 2))
                           ]),
                       Row(
@@ -253,13 +293,12 @@ class TipCalculatorState extends State<TipCalculator> {
                                 width: 90,
                                 child: Text(
                                   "Notes:",
-                                  style: Style.textStyle,
+                                  style: Style.labelStyle,
                                   textAlign: TextAlign.center,
                                 )),
                             SizedBox(
                                 width: 240,
                                 child: TextField(
-                                    style: Style.textStyle,
                                     textAlign: TextAlign.right,
                                     keyboardType: TextInputType.multiline,
                                     minLines: 1,
@@ -271,7 +310,7 @@ class TipCalculatorState extends State<TipCalculator> {
   //==== Card Subwidgets ====
   Widget _taxedTotalInput() {
     return Column(children: [
-      Text("After Tax Total", style: Style.textStyle),
+      Text("After Tax Total", style: Style.labelStyle),
       SizedBox(
           width: 100,
           child: TextField(
@@ -316,7 +355,7 @@ class TipCalculatorState extends State<TipCalculator> {
     ).toList();
 
     return Column(children: [
-      Text("After Tax Tip", style: Style.textStyle),
+      Text("After Tax Tip", style: Style.labelStyle),
       SizedBox(
           width: 100,
           height: 150,
@@ -369,17 +408,17 @@ class TipCalculatorState extends State<TipCalculator> {
       case 6:
         return "\$100+";
       case 5:
-        return "\$50 to \$100";
+        return "\$50 - \$100";
       case 4:
-        return "\$30 to \$50";
+        return "\$30 - \$50";
       case 3:
-        return "\$20 to \$30";
+        return "\$20 - \$30";
       case 2:
-        return "\$15 to \$20";
+        return "\$15 - \$20";
       case 1:
-        return "\$10 to \$15";
+        return "\$10 - \$15";
       default:
-        return "\$0 to \$10";
+        return "\$0 - \$10";
     }
   }
 

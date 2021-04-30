@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 class Style {
-  static final textStyle = TextStyle(
+  static final labelStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w800,
+    fontFamily: 'Roboto',
+    letterSpacing: 0.5,
+    fontSize: 18,
+    height: 2,
+  );
+
+  static final textStyle = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.normal,
     fontFamily: 'Roboto',
     letterSpacing: 0.5,
     fontSize: 18,
