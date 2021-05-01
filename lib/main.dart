@@ -4,7 +4,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/model/payment.dart';
+import 'package:flutterapp/model/payment/m_payment.dart';
+import 'package:flutterapp/model/payment/tt_payment.dart';
+import 'package:flutterapp/model/payment/ut_payment.dart';
 import 'package:flutterapp/widget/payment_history.dart';
 import 'package:flutterapp/widget/tip_calculator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,7 +43,10 @@ class _TipMainState extends State<TipMain> {
   List<Map<String, dynamic>> history;
   bool prefsLoaded = false;
   SharedPreferences prefs;
-  PaymentModel paymentModel = PaymentModel();
+
+  var ttPayment = TTPayment();
+  var utPayment = UTPayment();
+  var mPayment = MPayment();
 
   //==== Overrides ====
   @override
@@ -63,7 +68,11 @@ class _TipMainState extends State<TipMain> {
 
     Widget body = navigationIndex == 0
         ? TipCalculator(
-            paymentModel: paymentModel, prefs: prefs, history: history)
+            ttPayment: ttPayment,
+            utPayment: utPayment,
+            mPayment: mPayment,
+            prefs: prefs,
+            history: history)
         : PaymentHistory(history, prefs);
 
     return Scaffold(

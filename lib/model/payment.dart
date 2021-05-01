@@ -1,6 +1,13 @@
-import '../currency.dart';
-
-class PaymentModel {
+// Types of payment are:
+// * TTPayment - Payment with tip based on taxed total
+// * UTPayment - Payment with tip based on untaxed total
+// * MPayment - Payment manually tipped
+//
+// Totals are defined as follows:
+// * subtotal = item costs + any special taxes or fees
+// * taxedTotal = subtotal + tax
+// * grandTotal = subtotal + tax + tip
+class Payment {
   static final tipPercents = <String>[
     "0%",
     "5%",
@@ -15,51 +22,4 @@ class PaymentModel {
     "25%",
     "30%",
   ];
-
-  // Totals are defined as follows:
-  // subtotal = item costs + any special taxes or fees
-  // taxedTotal = subtotal + tax
-  // grandTotal = subtotal + tax + tip
-
-  int taxedTotalCents = 0;
-  int tipPercentIndex = 5;
-
-  double tipFraction() {
-    return Currency.parsePercent(tipPercents[tipPercentIndex]);
-  }
-
-  int tipCents() {
-    return (taxedTotalCents * tipFraction()).floor();
-  }
-
-  int grandTotalCents() {
-    return taxedTotalCents + tipCents();
-  }
-
-  String formattedTaxedTotal() {
-    return Currency.formatCents(taxedTotalCents);
-  }
-
-  String formattedTipTotal() {
-    return Currency.formatCents(tipCents());
-  }
-
-  String formattedGrandTotal() {
-    return Currency.formatCents(grandTotalCents());
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "taxedTotalCents": taxedTotalCents,
-      "centipercent": Currency.parseCentipercent(tipPercents[tipPercentIndex]),
-    };
-  }
-
-  void setTaxedTotal(String formattedDollars) {
-    taxedTotalCents = Currency.parseCents(formattedDollars);
-  }
-
-  void setTipPercentIndex(int newIndex) {
-    tipPercentIndex = newIndex;
-  }
 }
