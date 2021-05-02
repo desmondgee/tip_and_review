@@ -46,7 +46,7 @@ class _TipMainState extends State<TipMain> {
 
   var ttPayment;
   var utPayment;
-  var mPayment = MPayment();
+  var mPayment;
 
   //==== Overrides ====
   @override
@@ -60,6 +60,7 @@ class _TipMainState extends State<TipMain> {
         history = jsonDecode(encodedHistory).cast<Map<String, dynamic>>();
         ttPayment = TTPayment(history: history, prefs: prefs);
         utPayment = UTPayment(history: history, prefs: prefs);
+        mPayment = MPayment(history: history, prefs: prefs);
         prefsLoaded = true;
       });
     });

@@ -45,8 +45,10 @@ class UTPayment with NotesMixin, HistoryMixin {
   Map<String, dynamic> toJson() {
     return {
       "type": "UTPayment",
+      "datetime": DateTime.now().millisecondsSinceEpoch,
       "subtotalCents": subtotalCents,
       "taxCents": taxCents,
+      "grandTotalCents": grandTotalCents(),
       "tipCents": tipCents(),
     };
   }

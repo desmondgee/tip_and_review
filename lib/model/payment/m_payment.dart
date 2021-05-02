@@ -24,6 +24,7 @@ class MPayment with NotesMixin, HistoryMixin {
   Map<String, dynamic> toJson() {
     return {
       "type": "MPayment",
+      "datetime": DateTime.now().millisecondsSinceEpoch,
       "grandTotalCents": grandTotalCents,
       "tipCents": tipCents
     };

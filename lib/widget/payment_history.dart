@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../currency.dart';
 
@@ -39,16 +40,27 @@ class _PaymentHistoryState extends State<PaymentHistory> {
         itemCount: history.length,
         itemBuilder: (BuildContext context, int index) {
           Map payment = history[history.length - index - 1];
-          int taxedTotalCents = payment["taxedTotalCents"];
-          String formattedTaxedTotal = Currency.formatCents(taxedTotalCents);
-          double tipFraction = payment["centipercent"] * 0.01;
-          int tipDecimals = tipFraction % 1 < 0.1 ? 0 : 1;
-          String formattedTip = tipFraction.toStringAsFixed(tipDecimals) + "\%";
-          return ListTile(
-              title: Text("Total With Tax was " +
-                  formattedTaxedTotal +
-                  " and tip was " +
-                  formattedTip));
+          String text;
+
+          switch (payment["type"]) {
+            case "TTPayment":
+            case "MPayment":
+            case "UTPayment":
+              String grandTotal =
+                  Currency.formatCents(payment["grandTotalCents"]);
+              String tip = Currency.formatCents(payment["tipCents"]);
+              DateFormat formatter = DateFormat('MMMM dd, yyyy');
+              String datetime = payment["datetime"] == null
+                  ? "???"
+                  : formatter.format(
+                      DateTime.fromMillisecondsSinceEpoch(payment["datetime"]));
+              text = "$datetime - Paid $grandTotal with tip of $tip";
+              break;
+            default:
+              text = "Unknown payment type '${payment["type"]}'";
+          }
+
+          return ListTile(title: Text(text));
         });
   }
 }
