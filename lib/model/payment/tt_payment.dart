@@ -1,14 +1,22 @@
+import 'package:flutterapp/model/payment/history_mixin.dart';
 import 'package:flutterapp/model/payment/notes_mixin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../currency.dart';
 import '../payment.dart';
 
-class TTPayment with NotesMixin {
+class TTPayment with NotesMixin, HistoryMixin {
   int taxedTotalCents = 0;
-  int tipPercentIndex = 5;
+  int tipIndex = 5;
+  List<Map<String, dynamic>> history;
+  SharedPreferences prefs;
+
+  TTPayment({this.history, this.prefs}) {
+    tipIndex = prefs.getInt("tip_index") ?? 5;
+  }
 
   double tipFraction() {
-    return Currency.parsePercent(Payment.tipPercents[tipPercentIndex]);
+    return Currency.parsePercent(Payment.tipPercents[tipIndex]);
   }
 
   int tipCents() {
@@ -34,9 +42,8 @@ class TTPayment with NotesMixin {
   Map<String, dynamic> toJson() {
     return {
       "type": "TTPayment",
-      "taxedTotalCents": taxedTotalCents,
-      "centipercent":
-          Currency.parseCentipercent(Payment.tipPercents[tipPercentIndex]),
+      "grandTotalCents": grandTotalCents(),
+      "tipCents": tipCents(),
     };
   }
 
@@ -45,6 +52,12 @@ class TTPayment with NotesMixin {
   }
 
   void setTipPercentIndex(int newIndex) {
-    tipPercentIndex = newIndex;
+    tipIndex = newIndex;
+    prefs.setInt("tip_index", newIndex);
+  }
+
+  void save() {
+    saveToHistory(toJson());
+    taxedTotalCents = 0;
   }
 }

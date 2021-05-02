@@ -3,11 +3,11 @@ import '../../style.dart';
 
 class CalculatorScaffold extends StatefulWidget {
   final bool isSavable;
-  final Function onSave;
+  final Function onSaved;
   final Widget body;
   final String header;
 
-  CalculatorScaffold({this.isSavable, this.onSave, this.body, this.header});
+  CalculatorScaffold({this.isSavable, this.onSaved, this.body, this.header});
 
   @override
   _CalculatorScaffoldState createState() => _CalculatorScaffoldState();
@@ -19,7 +19,7 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
     return Scaffold(
         floatingActionButton: widget.isSavable
             ? FloatingActionButton(
-                onPressed: widget.onSave,
+                onPressed: widget.onSaved,
                 child: Icon(Icons.bookmarks_outlined),
                 backgroundColor: Colors.teal,
                 tooltip: "Save Payments To History",

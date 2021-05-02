@@ -1,13 +1,21 @@
+import 'package:flutterapp/model/payment/history_mixin.dart';
+import 'package:flutterapp/model/payment/notes_mixin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../currency.dart';
 import '../payment.dart';
 
-class UTPayment {
+class UTPayment with NotesMixin, HistoryMixin {
   int subtotalCents = 0;
   int taxCents = 0;
-  int tipPercentIndex = 5;
+  int tipIndex = 5;
+  List<Map<String, dynamic>> history;
+  SharedPreferences prefs;
+
+  UTPayment({this.history, this.prefs});
 
   double tipFraction() {
-    return Currency.parsePercent(Payment.tipPercents[tipPercentIndex]);
+    return Currency.parsePercent(Payment.tipPercents[tipIndex]);
   }
 
   int tipCents() {
@@ -39,8 +47,7 @@ class UTPayment {
       "type": "UTPayment",
       "subtotalCents": subtotalCents,
       "taxCents": taxCents,
-      "centipercent":
-          Currency.parseCentipercent(Payment.tipPercents[tipPercentIndex]),
+      "tipCents": tipCents(),
     };
   }
 
@@ -53,6 +60,12 @@ class UTPayment {
   }
 
   void setTipPercentIndex(int newIndex) {
-    tipPercentIndex = newIndex;
+    tipIndex = newIndex;
+  }
+
+  void save() {
+    saveToHistory(toJson());
+    subtotalCents = 0;
+    taxCents = 0;
   }
 }

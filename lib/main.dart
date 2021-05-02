@@ -44,19 +44,22 @@ class _TipMainState extends State<TipMain> {
   bool prefsLoaded = false;
   SharedPreferences prefs;
 
-  var ttPayment = TTPayment();
-  var utPayment = UTPayment();
+  var ttPayment;
+  var utPayment;
   var mPayment = MPayment();
 
   //==== Overrides ====
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       prefs = await SharedPreferences.getInstance();
       String encodedHistory = prefs.getString("history") ?? "[]";
       setState(() {
         history = jsonDecode(encodedHistory).cast<Map<String, dynamic>>();
+        ttPayment = TTPayment(history: history, prefs: prefs);
+        utPayment = UTPayment(history: history, prefs: prefs);
         prefsLoaded = true;
       });
     });
@@ -68,11 +71,7 @@ class _TipMainState extends State<TipMain> {
 
     Widget body = navigationIndex == 0
         ? TipCalculator(
-            ttPayment: ttPayment,
-            utPayment: utPayment,
-            mPayment: mPayment,
-            prefs: prefs,
-            history: history)
+            ttPayment: ttPayment, utPayment: utPayment, mPayment: mPayment)
         : PaymentHistory(history, prefs);
 
     return Scaffold(

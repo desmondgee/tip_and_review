@@ -6,22 +6,14 @@ import 'package:flutterapp/model/payment/ut_payment.dart';
 import 'package:flutterapp/widget/tip_calculator/m_calculator.dart';
 import 'package:flutterapp/widget/tip_calculator/tt_calculator.dart';
 import 'package:flutterapp/widget/tip_calculator/ut_calculator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'page_dots.dart';
 
 class TipCalculator extends StatefulWidget {
-  final List<Map<String, dynamic>> history;
   final TTPayment ttPayment;
   final UTPayment utPayment;
   final MPayment mPayment;
-  final SharedPreferences prefs;
   final int pages = 3;
-  TipCalculator(
-      {this.ttPayment,
-      this.utPayment,
-      this.mPayment,
-      this.prefs,
-      this.history});
+  TipCalculator({this.ttPayment, this.utPayment, this.mPayment});
 
   @override
   TipCalculatorState createState() => TipCalculatorState();
@@ -53,20 +45,11 @@ class TipCalculatorState extends State<TipCalculator> {
               itemBuilder: (_, i) {
                 switch (i % 3) {
                   case 0:
-                    return TTCalculator(
-                        ttPayment: widget.ttPayment,
-                        prefs: widget.prefs,
-                        history: widget.history);
+                    return TTCalculator(ttPayment: widget.ttPayment);
                   case 1:
-                    return UTCalculator(
-                        utPayment: widget.utPayment,
-                        prefs: widget.prefs,
-                        history: widget.history);
+                    return UTCalculator(utPayment: widget.utPayment);
                   default:
-                    return MCalculator(
-                        mPayment: widget.mPayment,
-                        prefs: widget.prefs,
-                        history: widget.history);
+                    return MCalculator(mPayment: widget.mPayment);
                 }
               }))
     ]);

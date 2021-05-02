@@ -1,22 +1,19 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutterapp/widget/other_info_section.dart';
+import 'package:flutterapp/widget/section.dart';
+import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
+import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
 import '../../model/payment/ut_payment.dart';
-import '../../model/payment.dart';
 import '../../style.dart';
 import '../../currency.dart';
-import '../section.dart';
 import 'calculator_scaffold.dart';
 
 class UTCalculator extends StatefulWidget {
   final UTPayment utPayment;
-  final SharedPreferences prefs;
-  List<Map<String, dynamic>> history;
 
-  UTCalculator({this.utPayment, this.prefs, this.history});
+  UTCalculator({this.utPayment});
 
   @override
   _UTCalculatorState createState() => _UTCalculatorState();
@@ -26,7 +23,7 @@ class _UTCalculatorState extends State<UTCalculator> {
   //==== State Variables ====
   var subtotalController = TextEditingController();
   var taxController = TextEditingController();
-  var inputTipController = FixedExtentScrollController(initialItem: 0);
+  var tipController = FixedExtentScrollController(initialItem: 0);
 
   //==== Overrides ====
   @override
@@ -36,7 +33,7 @@ class _UTCalculatorState extends State<UTCalculator> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       subtotalController.text = widget.utPayment.formattedSubtotal();
       taxController.text = widget.utPayment.formattedTax();
-      inputTipController.jumpToItem(widget.utPayment.tipPercentIndex);
+      tipController.jumpToItem(widget.utPayment.tipIndex);
     });
   }
 
@@ -44,70 +41,37 @@ class _UTCalculatorState extends State<UTCalculator> {
   Widget build(BuildContext context) {
     return CalculatorScaffold(
         isSavable: true,
-        onSave: () => null,
-        header: "Tip Calculator Version A",
+        onSaved: () {
+          setState(() {
+            subtotalController.clear();
+            taxController.clear();
+            widget.utPayment.save();
+          });
+        },
+        header: "Pre-Tax Tip Calculator",
         body: Column(children: [
-          _youPaySection(),
+          YouPaySection(
+              formattedTip: widget.utPayment.formattedTip(),
+              formattedGrandTotal: widget.utPayment.formattedGrandTotal()),
           _basedOnSection(),
+          OtherInfoSection(payment: widget.utPayment),
         ]));
   }
 
   //==== Widgets ====
-  Widget _youPaySection() {
+  Widget _basedOnSection() {
     return Section(
-        title: "You Pay",
+        title: "Based On",
         body: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            SizedBox(
-                width: 140,
-                child: Text(
-                  "Tip Amount:",
-                  style: Style.labelStyle,
-                  textAlign: TextAlign.center,
-                )),
-            SizedBox(
-                width: 140,
-                child: Text(
-                  widget.utPayment.formattedTip(),
-                  style: Style.labelStyle,
-                  textAlign: TextAlign.right,
-                ))
-          ]),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            SizedBox(
-                width: 140,
-                child: Text(
-                  "Total Amount:",
-                  style: Style.labelStyle,
-                  textAlign: TextAlign.center,
-                )),
-            SizedBox(
-                width: 140,
-                child: Text(
-                  widget.utPayment.formattedGrandTotal(),
-                  style: Style.labelStyle,
-                  textAlign: TextAlign.right,
-                ))
+            Column(children: [_subtotalField(), _taxField()]),
+            TipScroller(
+                controller: tipController,
+                onChanged: (newIndex) => setState(() {
+                      widget.utPayment.setTipPercentIndex(newIndex);
+                    }))
           ]),
         ]));
-  }
-
-  Widget _basedOnSection() {
-    return Center(
-        child: SizedBox(
-            width: 500,
-            child: Card(
-                margin: EdgeInsets.all(20.0),
-                child: Column(children: [
-                  Text("Based On", style: Style.headerStyle),
-                  Divider(),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(children: [_subtotalField(), _taxField()]),
-                        _tipScroller()
-                      ]),
-                ]))));
   }
 
   Widget _subtotalField() {
@@ -164,51 +128,5 @@ class _UTCalculatorState extends State<UTCalculator> {
                   border: OutlineInputBorder(),
                   hintText: "\$0.00")))
     ]);
-  }
-
-  Widget _tipScroller() {
-    final tipTiles = Payment.tipPercents.map(
-      (String value) {
-        return ListTile(
-          title: Text(
-            value,
-            style: Style.wheelTextStyle,
-            textAlign: TextAlign.center,
-          ),
-        );
-      },
-    );
-    final dividedTipTiles = ListTile.divideTiles(
-      context: context,
-      tiles: tipTiles,
-    ).toList();
-
-    return Column(children: [
-      Text("After Tax Tip", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          height: 150,
-          child: CupertinoPicker(
-            itemExtent: 44,
-            children: dividedTipTiles,
-            scrollController: inputTipController,
-            onSelectedItemChanged: (newIndex) => setState(() {
-              widget.utPayment.setTipPercentIndex(newIndex);
-            }),
-          ))
-    ]);
-  }
-
-  //==== Functions ====
-  void _saveToHistory() {
-    Map<String, dynamic> payment = widget.utPayment.toJson();
-    setState(() {
-      subtotalController.clear();
-      taxController.clear();
-      widget.utPayment.subtotalCents = 0;
-      widget.utPayment.taxCents = 0;
-      widget.history.add(payment);
-      widget.prefs.setString("history", jsonEncode(widget.history));
-    });
   }
 }

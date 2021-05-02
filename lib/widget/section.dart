@@ -20,9 +20,9 @@ class _SectionState extends State<Section> {
                 margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                 child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                        EdgeInsets.symmetric(horizontal: 40.0, vertical: 25.0),
                     child: Column(children: [
-                      Text("You Pay", style: Style.headerStyle),
+                      Text(widget.title, style: Style.headerStyle),
                       Divider(),
                       widget.body
                     ])))));
