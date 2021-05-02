@@ -17,10 +17,10 @@ class _SectionState extends State<Section> {
         child: SizedBox(
             width: 500,
             child: Card(
-                margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                margin: EdgeInsets.symmetric(vertical: 10.0),
                 child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 40.0, vertical: 25.0),
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 25.0),
                     child: Column(children: [
                       Text(widget.title, style: Style.headerStyle),
                       Divider(),

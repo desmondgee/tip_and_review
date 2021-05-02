@@ -6,7 +6,7 @@ class Style {
     fontWeight: FontWeight.w800,
     fontFamily: 'Roboto',
     letterSpacing: 0.5,
-    fontSize: 18,
+    fontSize: 16,
     height: 2,
   );
 
@@ -15,7 +15,7 @@ class Style {
     fontWeight: FontWeight.normal,
     fontFamily: 'Roboto',
     letterSpacing: 0.5,
-    fontSize: 18,
+    fontSize: 12,
     height: 2,
   );
 

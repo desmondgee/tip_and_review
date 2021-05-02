@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterapp/widget/other_info_section.dart';
+import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
 import '../../model/payment/m_payment.dart';
 import '../../style.dart';
@@ -44,7 +44,7 @@ class _MCalculatorState extends State<MCalculator> {
             widget.mPayment.save();
           });
         },
-        header: "Manual Tip Input",
+        header: "Custom Tip",
         body: Column(children: [
           _basedOnSection(),
           OtherInfoSection(payment: widget.mPayment),
@@ -64,7 +64,7 @@ class _MCalculatorState extends State<MCalculator> {
 
   Widget _grandTotalInput() {
     return Column(children: [
-      Text("Grand Total", style: Style.labelStyle),
+      Text("Total", style: Style.labelStyle),
       SizedBox(
           width: 100,
           child: TextField(

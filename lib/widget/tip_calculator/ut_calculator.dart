@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterapp/widget/other_info_section.dart';
+import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
 import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
@@ -48,7 +48,7 @@ class _UTCalculatorState extends State<UTCalculator> {
             widget.utPayment.save();
           });
         },
-        header: "Pre-Tax Tip Calculator",
+        header: "Pre-Tax Tip",
         body: Column(children: [
           YouPaySection(
               formattedTip: widget.utPayment.formattedTip(),
