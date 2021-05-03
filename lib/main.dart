@@ -76,7 +76,7 @@ class _TipMainState extends State<TipMain> {
         : PaymentHistory(history, prefs);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Tip Main Page')),
+      appBar: AppBar(title: Text('Tip Calculator')),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
