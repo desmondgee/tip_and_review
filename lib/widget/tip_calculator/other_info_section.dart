@@ -14,6 +14,20 @@ class OtherInfoSection extends StatefulWidget {
 }
 
 class _OtherInfoSectionState extends State<OtherInfoSection> {
+  var locationController = TextEditingController();
+  var notesController = TextEditingController();
+
+  //==== Overrides ====
+  //@override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      locationController.text = widget.payment.location;
+      notesController.text = widget.payment.notes;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Section(
@@ -35,6 +49,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
                   decoration: InputDecoration(border: OutlineInputBorder()),
                   style: Style.labelStyle,
                   textAlign: TextAlign.right,
+                  onChanged: (value) => widget.payment.location = value,
                 )
               ]),
               TableRow(children: [
@@ -116,6 +131,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
                     decoration: InputDecoration(border: OutlineInputBorder()),
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.multiline,
+                    onChanged: (value) => widget.payment.notes = value,
                     minLines: 1,
                     maxLines: null)
               ]),

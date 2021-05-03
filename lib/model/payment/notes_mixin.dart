@@ -22,16 +22,31 @@ abstract class NotesMixin {
   int foodRating = 2;
   int pricing = 2;
   int experience = 1;
+  String location;
+  String notes;
 
   String foodRatingLabel() {
+    if (foodRating == null) return null;
     return foodRatingLabels[foodRating];
   }
 
   String pricingLabel() {
+    if (pricing == null) return null;
     return pricingLabels[pricing];
   }
 
   String experienceLabel() {
+    if (experience == null) return null;
     return experienceLabels[experience];
+  }
+
+  Map<String, dynamic> notesJson() {
+    return {
+      "foodRating": foodRating,
+      "pricing": pricing,
+      "experience": experience,
+      "location": location,
+      "notes": notes
+    };
   }
 }

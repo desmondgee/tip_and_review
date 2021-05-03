@@ -7,7 +7,13 @@
 // * subtotal = item costs + any special taxes or fees
 // * taxedTotal = subtotal + tax
 // * grandTotal = subtotal + tax + tip
-class Payment {
+import 'dart:convert';
+
+import 'package:flutterapp/currency.dart';
+import 'package:flutterapp/model/payment/notes_mixin.dart';
+import 'package:intl/intl.dart';
+
+class Payment with NotesMixin {
   static final tipPercents = <String>[
     "0%",
     "5%",
@@ -22,4 +28,41 @@ class Payment {
     "25%",
     "30%",
   ];
+
+  static final DateFormat dateFormatter = DateFormat('MMMM dd, yyyy');
+
+  int tipCents = 0;
+  int grandTotalCents = 0;
+  DateTime datetime;
+
+  Payment.fromJson(Map<String, dynamic> json) {
+    tipCents = json["tipCents"];
+    grandTotalCents = json["grandTotalCents"];
+    datetime = DateTime.fromMillisecondsSinceEpoch(json["datetime"]);
+    location = json["location"];
+    foodRating = json["foodRating"];
+    pricing = json["pricing"];
+    experience = json["experience"];
+    notes = json["notes"];
+  }
+
+  double _tipFraction() {
+    return tipCents / (grandTotalCents - tipCents);
+  }
+
+  String formattedDateTime() {
+    return datetime == null ? "DATE MISSING" : dateFormatter.format(datetime);
+  }
+
+  String formattedTipPercent() {
+    return Currency.formatPercent(_tipFraction(), trailing: 1);
+  }
+
+  String formattedTip() {
+    return Currency.formatCents(tipCents);
+  }
+
+  String formattedGrandTotal() {
+    return Currency.formatCents(grandTotalCents);
+  }
 }

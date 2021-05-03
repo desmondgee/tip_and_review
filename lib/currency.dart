@@ -29,8 +29,9 @@ class Currency {
     return double.parse(numbers) * 0.01;
   }
 
-  static int parseCentipercent(String formattedPercent) {
-    // times 100 to convert fraction to percent, then times 100 again to turn into centipercents.
-    return (parsePercent(formattedPercent) * 100 * 100).round();
+  // Converts a multiplicable double such as `0.125` into a formatted percent such as `12.5%`
+  static String formatPercent(double fraction, {int trailing: 0}) {
+    // TODO: Might need to do something more complicated to handle floating point precision errors.
+    return (fraction * 100).toStringAsFixed(trailing) + "%";
   }
 }

@@ -43,7 +43,7 @@ class UTPayment with NotesMixin, HistoryMixin {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    var json = {
       "type": "UTPayment",
       "datetime": DateTime.now().millisecondsSinceEpoch,
       "subtotalCents": subtotalCents,
@@ -51,6 +51,8 @@ class UTPayment with NotesMixin, HistoryMixin {
       "grandTotalCents": grandTotalCents(),
       "tipCents": tipCents(),
     };
+    json.addAll(notesJson());
+    return json;
   }
 
   void setSubtotal(String formattedDollars) {

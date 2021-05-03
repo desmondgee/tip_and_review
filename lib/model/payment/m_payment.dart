@@ -22,12 +22,14 @@ class MPayment with NotesMixin, HistoryMixin {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    var json = {
       "type": "MPayment",
       "datetime": DateTime.now().millisecondsSinceEpoch,
       "grandTotalCents": grandTotalCents,
       "tipCents": tipCents
     };
+    json.addAll(notesJson());
+    return json;
   }
 
   void setGrandTotal(String formattedDollars) {
