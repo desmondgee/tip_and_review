@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
 import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
@@ -67,7 +68,20 @@ class _UTCalculatorState extends State<UTCalculator> {
         title: "Based On",
         body: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            Column(children: [_subtotalField(), _taxField()]),
+            Column(children: [
+              CurrencyField(
+                label: "Subtotal",
+                controller: subtotalController,
+                onChanged: (value) =>
+                    setState(() => widget.utPayment.setSubtotal(value)),
+              ),
+              CurrencyField(
+                label: "Tax",
+                controller: taxController,
+                onChanged: (value) =>
+                    setState(() => widget.utPayment.setTax(value)),
+              )
+            ]),
             TipScroller(
                 controller: tipController,
                 onChanged: (newIndex) => setState(() {
@@ -75,61 +89,5 @@ class _UTCalculatorState extends State<UTCalculator> {
                     }))
           ]),
         ]));
-  }
-
-  Widget _subtotalField() {
-    return Column(children: [
-      Text("Subtotal", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          child: TextField(
-              controller: subtotalController,
-              keyboardType: TextInputType.number,
-              onChanged: (value) =>
-                  setState(() => widget.utPayment.setSubtotal(value)),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  String text = Currency.reformatDollars(newValue.text);
-                  return TextEditingValue(
-                      text: text,
-                      selection: TextSelection.collapsed(
-                          // offset > length safe in chrome but crashes android.
-                          offset: text.length));
-                })
-              ],
-              decoration: InputDecoration(
-                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                  border: OutlineInputBorder(),
-                  hintText: "\$0.00")))
-    ]);
-  }
-
-  Widget _taxField() {
-    return Column(children: [
-      Text("Tax", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          child: TextField(
-              controller: taxController,
-              keyboardType: TextInputType.number,
-              onChanged: (value) =>
-                  setState(() => widget.utPayment.setTax(value)),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  String text = Currency.reformatDollars(newValue.text);
-                  return TextEditingValue(
-                      text: text,
-                      selection: TextSelection.collapsed(
-                          // offset > length safe in chrome but crashes android.
-                          offset: text.length));
-                })
-              ],
-              decoration: InputDecoration(
-                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                  border: OutlineInputBorder(),
-                  hintText: "\$0.00")))
-    ]);
   }
 }

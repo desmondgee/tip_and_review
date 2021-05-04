@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
 import '../../model/payment/m_payment.dart';
@@ -59,65 +60,20 @@ class _MCalculatorState extends State<MCalculator> {
     return Section(
         title: "Payment",
         body: Column(children: [
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [_tipInput(), _grandTotalInput()]),
-        ]));
-  }
-
-  Widget _grandTotalInput() {
-    return Column(children: [
-      Text("Total", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          child: TextField(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            CurrencyField(
+              label: "Total",
               controller: grandTotalController,
-              keyboardType: TextInputType.number,
               onChanged: (value) =>
                   setState(() => widget.mPayment.setGrandTotal(value)),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  String text = Currency.reformatDollars(newValue.text);
-                  return TextEditingValue(
-                      text: text,
-                      selection: TextSelection.collapsed(
-                          // offset > length safe in chrome but crashes android.
-                          offset: text.length));
-                })
-              ],
-              decoration: InputDecoration(
-                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                  border: OutlineInputBorder(),
-                  hintText: "\$0.00")))
-    ]);
-  }
-
-  Widget _tipInput() {
-    return Column(children: [
-      Text("Tip", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          child: TextField(
+            ),
+            CurrencyField(
+              label: "Tip",
               controller: tipController,
-              keyboardType: TextInputType.number,
               onChanged: (value) =>
                   setState(() => widget.mPayment.setTip(value)),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  String text = Currency.reformatDollars(newValue.text);
-                  return TextEditingValue(
-                      text: text,
-                      selection: TextSelection.collapsed(
-                          // offset > length safe in chrome but crashes android.
-                          offset: text.length));
-                })
-              ],
-              decoration: InputDecoration(
-                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                  border: OutlineInputBorder(),
-                  hintText: "\$0.00")))
-    ]);
+            )
+          ]),
+        ]));
   }
 }

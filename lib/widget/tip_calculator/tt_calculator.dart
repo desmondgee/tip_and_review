@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
 import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
@@ -63,7 +64,12 @@ class _TTCalculatorState extends State<TTCalculator> {
     return Section(
       title: "Based On",
       body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        _taxedTotalField(),
+        CurrencyField(
+          label: "After Tax Total",
+          controller: taxedTotalController,
+          onChanged: (value) =>
+              setState(() => widget.ttPayment.setTaxedTotal(value)),
+        ),
         TipScroller(
             controller: tipController,
             onChanged: (newIndex) => setState(() {
@@ -71,33 +77,5 @@ class _TTCalculatorState extends State<TTCalculator> {
                 }))
       ]),
     );
-  }
-
-  Widget _taxedTotalField() {
-    return Column(children: [
-      Text("After Tax Total", style: Style.labelStyle),
-      SizedBox(
-          width: 100,
-          child: TextField(
-              controller: taxedTotalController,
-              keyboardType: TextInputType.number,
-              onChanged: (value) =>
-                  setState(() => widget.ttPayment.setTaxedTotal(value)),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  String text = Currency.reformatDollars(newValue.text);
-                  return TextEditingValue(
-                      text: text,
-                      selection: TextSelection.collapsed(
-                          // offset > length safe in chrome but crashes android.
-                          offset: text.length));
-                })
-              ],
-              decoration: InputDecoration(
-                  // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
-                  border: OutlineInputBorder(),
-                  hintText: "\$0.00")))
-    ]);
   }
 }
