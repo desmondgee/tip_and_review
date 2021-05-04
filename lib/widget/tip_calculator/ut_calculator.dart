@@ -40,7 +40,10 @@ class _UTCalculatorState extends State<UTCalculator> {
   @override
   Widget build(BuildContext context) {
     return CalculatorScaffold(
-        isSavable: true,
+        isSavable: subtotalController.text.isNotEmpty &&
+            Currency.parseCents(subtotalController.text) > 0 &&
+            taxController.text.isNotEmpty &&
+            Currency.parseCents(taxController.text) > 0,
         onSaved: () {
           setState(() {
             subtotalController.clear();

@@ -36,7 +36,10 @@ class _MCalculatorState extends State<MCalculator> {
   @override
   Widget build(BuildContext context) {
     return CalculatorScaffold(
-        isSavable: true,
+        isSavable: grandTotalController.text.isNotEmpty &&
+            Currency.parseCents(grandTotalController.text) > 0 &&
+            tipController.text.isNotEmpty &&
+            Currency.parseCents(tipController.text) > 0,
         onSaved: () {
           setState(() {
             grandTotalController.clear();
