@@ -28,7 +28,10 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
         body: SingleChildScrollView(
             child: Column(children: [
           Center(child: Text(widget.header, style: Style.headerStyle)),
-          widget.body
+          widget.body,
+          SizedBox(
+              height:
+                  80) // add space so save button doesn't overlapping notes field.
         ])));
   }
 }

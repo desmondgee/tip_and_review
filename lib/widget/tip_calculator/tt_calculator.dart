@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
 import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
 import '../../model/payment/tt_payment.dart';
-import '../../style.dart';
 import '../../currency.dart';
 import '../section.dart';
 import 'calculator_scaffold.dart';
