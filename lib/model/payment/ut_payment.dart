@@ -71,5 +71,6 @@ class UTPayment with NotesMixin, HistoryMixin {
     saveToHistory(toJson());
     subtotalCents = 0;
     taxCents = 0;
+    clearNotes();
   }
 }

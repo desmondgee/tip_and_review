@@ -4,9 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/model/payment.dart';
 import 'package:flutterapp/style.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../currency.dart';
 
 class PaymentHistory extends StatefulWidget {
   final List<Map<String, dynamic>> history;

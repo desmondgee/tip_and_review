@@ -22,14 +22,20 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      locationController.text = widget.payment.location;
-      notesController.text = widget.payment.notes;
-    });
+    locationController.text = widget.payment.location;
+    notesController.text = widget.payment.notes;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.payment.location == null) {
+      locationController.clear();
+    }
+
+    if (widget.payment.notes == null) {
+      notesController.clear();
+    }
+
     return Section(
         title: "Other Info",
         body: Table(
@@ -46,6 +52,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
                   textAlign: TextAlign.center,
                 ),
                 TextField(
+                  controller: locationController,
                   decoration: InputDecoration(border: OutlineInputBorder()),
                   style: Style.labelStyle,
                   textAlign: TextAlign.right,
@@ -128,6 +135,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
                   textAlign: TextAlign.center,
                 ),
                 TextField(
+                    controller: notesController,
                     decoration: InputDecoration(border: OutlineInputBorder()),
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.multiline,

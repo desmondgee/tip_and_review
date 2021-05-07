@@ -12,7 +12,6 @@ class Currency {
     return cents;
   }
 
-  // TODO: Add comma separators.
   static String formatCents(int cents) {
     double dollars = cents / 100;
     return '\$' + dollars.toStringAsFixed(2);
@@ -31,7 +30,6 @@ class Currency {
 
   // Converts a multiplicable double such as `0.125` into a formatted percent such as `12.5%`
   static String formatPercent(double fraction, {int trailing: 0}) {
-    // TODO: Might need to do something more complicated to handle floating point precision errors.
     return (fraction * 100).toStringAsFixed(trailing) + "%";
   }
 }

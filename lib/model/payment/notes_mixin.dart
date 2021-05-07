@@ -49,4 +49,12 @@ abstract class NotesMixin {
       "notes": notes
     };
   }
+
+  void clearNotes() {
+    foodRating = 2;
+    pricing = 2;
+    experience = 1;
+    location = null;
+    notes = null;
+  }
 }

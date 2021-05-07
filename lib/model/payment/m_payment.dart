@@ -44,5 +44,6 @@ class MPayment with NotesMixin, HistoryMixin {
     saveToHistory(toJson());
     grandTotalCents = 0;
     tipCents = 0;
+    clearNotes();
   }
 }

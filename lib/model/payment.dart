@@ -7,8 +7,6 @@
 // * subtotal = item costs + any special taxes or fees
 // * taxedTotal = subtotal + tax
 // * grandTotal = subtotal + tax + tip
-import 'dart:convert';
-
 import 'package:flutterapp/currency.dart';
 import 'package:flutterapp/model/payment/notes_mixin.dart';
 import 'package:intl/intl.dart';

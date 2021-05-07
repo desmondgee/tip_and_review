@@ -62,5 +62,6 @@ class TTPayment with NotesMixin, HistoryMixin {
   void save() {
     saveToHistory(toJson());
     taxedTotalCents = 0;
+    clearNotes();
   }
 }
