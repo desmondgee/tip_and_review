@@ -6,6 +6,7 @@ class CalculatorScaffold extends StatefulWidget {
   final Function onSaved;
   final Widget body;
   final String header;
+  final scrollController = ScrollController();
 
   CalculatorScaffold({this.isSavable, this.onSaved, this.body, this.header});
 
@@ -19,19 +20,24 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
     return Scaffold(
         floatingActionButton: widget.isSavable
             ? FloatingActionButton(
-                onPressed: widget.onSaved,
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  widget.scrollController.jumpTo(0);
+                  widget.onSaved();
+                },
                 child: Icon(Icons.bookmarks_outlined),
                 backgroundColor: Colors.teal,
                 tooltip: "Save Payments To History",
               )
             : null,
         body: SingleChildScrollView(
+            controller: widget.scrollController,
             child: Column(children: [
-          Center(child: Text(widget.header, style: Style.headerStyle)),
-          widget.body,
-          SizedBox(
-              height:
-                  80) // add space so save button doesn't overlapping notes field.
-        ])));
+              Center(child: Text(widget.header, style: Style.headerStyle)),
+              widget.body,
+              SizedBox(
+                  height:
+                      80) // add space so save button doesn't overlapping notes field.
+            ])));
   }
 }
