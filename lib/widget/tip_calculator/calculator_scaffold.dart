@@ -24,6 +24,11 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
                   FocusScope.of(context).unfocus();
                   widget.scrollController.jumpTo(0);
                   widget.onSaved();
+
+                  final snackBar =
+                      SnackBar(content: Text("Payment saved to history"));
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 },
                 child: Icon(Icons.bookmarks_outlined),
                 backgroundColor: Colors.teal,
