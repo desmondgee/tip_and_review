@@ -46,7 +46,7 @@ class _MCalculatorState extends State<MCalculator> {
             widget.mPayment.save();
           });
         },
-        header: "Custom Tip",
+        header: "Custom",
         body: Column(children: [
           _basedOnSection(),
           OtherInfoSection(payment: widget.mPayment),

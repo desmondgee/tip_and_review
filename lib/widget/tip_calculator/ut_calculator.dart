@@ -50,7 +50,7 @@ class _UTCalculatorState extends State<UTCalculator> {
             widget.utPayment.save();
           });
         },
-        header: "Pre-Tax Tip",
+        header: "Before Tax",
         body: Column(children: [
           YouPaySection(
               formattedTip: widget.utPayment.formattedTip(),

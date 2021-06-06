@@ -45,7 +45,7 @@ class _TTCalculatorState extends State<TTCalculator> {
             widget.ttPayment.save();
           });
         },
-        header: "Post-Tax Tip",
+        header: "After Tax",
         body: Column(children: [
           YouPaySection(
               formattedTip: widget.ttPayment.formattedTip(),
