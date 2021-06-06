@@ -38,20 +38,6 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
         body: SingleChildScrollView(
             controller: widget.scrollController,
             child: Column(children: [
-              Center(
-                  child: DropdownButton<String>(
-                      value: widget.header,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      style: Style.headerStyle,
-                      underline: Container(height: 2, color: Colors.teal),
-                      onChanged: (String newValue) {},
-                      items: <String>['Before Tax', 'After Tax', 'Custom']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                            value: value, child: Text(value));
-                      }).toList())),
               widget.body,
               SizedBox(
                   height:

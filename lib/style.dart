@@ -36,4 +36,13 @@ class Style {
     fontSize: 16,
     height: 1,
   );
+
+  static final modePickerStyle = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w800,
+    fontFamily: 'Roboto',
+    letterSpacing: 0.5,
+    fontSize: 22,
+    height: 2,
+  );
 }

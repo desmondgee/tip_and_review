@@ -48,6 +48,8 @@ class _TipMainState extends State<TipMain> {
   var utPayment;
   var mPayment;
 
+  var navigationTitles = ["Tip Calculator", "Payment History"];
+
   //==== Overrides ====
   @override
   void initState() {
@@ -76,24 +78,46 @@ class _TipMainState extends State<TipMain> {
         : PaymentHistory(history, prefs);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Tip Calculator')),
+      appBar: AppBar(title: Text(navigationTitles[navigationIndex])),
       body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calculate_outlined),
-            label: 'Tip Calculator',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_stories),
-            label: 'Payment History',
-          ),
-        ],
-        currentIndex: navigationIndex,
-        selectedItemColor: Colors.teal,
-        onTap: (index) => setState(() {
-          navigationIndex = index;
-        }),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('The Tip Calculator App'),
+            ),
+            ListTile(
+              title: Text('Tip Calculator'),
+              onTap: () {
+                // Update the state of the app
+                setState(() {
+                  navigationIndex = 0;
+                });
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Payment History'),
+              onTap: () {
+                // Update the state of the app
+                setState(() {
+                  navigationIndex = 1;
+                });
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

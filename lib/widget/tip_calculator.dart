@@ -19,9 +19,17 @@ class TipCalculator extends StatefulWidget {
   TipCalculatorState createState() => TipCalculatorState();
 }
 
+var dropdownLabels = <String>['Exclude Tax', 'Include Tax', 'Custom'];
+var dropdownItems = dropdownLabels
+    .asMap()
+    .entries
+    .map<DropdownMenuItem<String>>((MapEntry<int, String> entry) {
+  return DropdownMenuItem<String>(value: entry.value, child: Text(entry.value));
+}).toList();
+
 class TipCalculatorState extends State<TipCalculator> {
   //==== State Variables ====
-  var pageController;
+  PageController pageController;
   int pageIndex = 0;
 
   //==== Overrides ====
@@ -30,13 +38,28 @@ class TipCalculatorState extends State<TipCalculator> {
     super.initState();
 
     pageController = PageController(
-        initialPage: widget.pages * 100); // can't scroll below 0 fix.
+        initialPage: widget.pages *
+            100); // can't scroll below page 0, so for looped back/forward swiping, just start at a high page number.
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      PageDots(index: pageIndex, length: widget.pages),
+      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        Text("Tip Mode: "),
+        DropdownButton<String>(
+            value: dropdownLabels[pageIndex],
+            icon: const Icon(Icons.sync_outlined),
+            iconSize: 24,
+            elevation: 16,
+            onChanged: (String newValue) {
+              setState(() {
+                pageIndex = dropdownLabels.indexOf(newValue);
+                pageController.jumpToPage(pageIndex);
+              });
+            },
+            items: dropdownItems)
+      ]),
       Expanded(
           child: PageView.builder(
               controller: pageController,
