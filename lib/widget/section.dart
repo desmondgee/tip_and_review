@@ -17,6 +17,13 @@ class _SectionState extends State<Section> {
         child: SizedBox(
             width: 500,
             child: Card(
+                color: Color.fromRGBO(247, 245, 240, 1),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                      width: 2, color: Color.fromRGBO(247, 234, 215, 1)),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
                 margin: EdgeInsets.symmetric(vertical: 10.0),
                 child: Padding(
                     padding:

@@ -18,6 +18,7 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Style.backgroundColor,
         floatingActionButton: widget.isSavable
             ? FloatingActionButton(
                 onPressed: () {

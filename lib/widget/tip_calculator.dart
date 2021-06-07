@@ -19,7 +19,7 @@ class TipCalculator extends StatefulWidget {
   TipCalculatorState createState() => TipCalculatorState();
 }
 
-var dropdownLabels = <String>['Exclude Tax', 'Include Tax', 'Custom'];
+var dropdownLabels = <String>['Include Tax', 'Exclude Tax', 'Custom'];
 var dropdownItems = dropdownLabels
     .asMap()
     .entries

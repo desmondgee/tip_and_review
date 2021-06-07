@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/model/payment/m_payment.dart';
 import 'package:flutterapp/model/payment/tt_payment.dart';
 import 'package:flutterapp/model/payment/ut_payment.dart';
+import 'package:flutterapp/style.dart';
 import 'package:flutterapp/widget/payment_history.dart';
 import 'package:flutterapp/widget/tip_calculator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,7 @@ MaterialApp tipApp() {
   return MaterialApp(
     title: 'Tip App',
     theme: ThemeData(
-      primaryColor: Colors.greenAccent,
+      primaryColor: Color.fromRGBO(192, 169, 112, 1),
     ),
     home: TipMain(),
   );
@@ -80,6 +81,7 @@ class _TipMainState extends State<TipMain> {
     return Scaffold(
       appBar: AppBar(title: Text(navigationTitles[navigationIndex])),
       body: body,
+      backgroundColor: Style.backgroundColor,
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical

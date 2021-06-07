@@ -45,4 +45,6 @@ class Style {
     fontSize: 22,
     height: 2,
   );
+
+  static final backgroundColor = Color.fromRGBO(205, 193, 174, 1);
 }
