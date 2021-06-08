@@ -7,7 +7,13 @@ class CurrencyField extends StatefulWidget {
   final TextEditingController controller;
   final Function onChanged;
   final String label;
-  CurrencyField({this.controller, this.onChanged, this.label});
+  final double labelGap;
+  CurrencyField({
+    this.controller,
+    this.onChanged,
+    this.label,
+    this.labelGap: 0,
+  });
 
   @override
   _CurrencyFieldState createState() => _CurrencyFieldState();
@@ -18,6 +24,7 @@ class _CurrencyFieldState extends State<CurrencyField> {
   Widget build(BuildContext context) {
     return Column(children: [
       Text(widget.label, style: Style.labelStyle),
+      SizedBox(height: widget.labelGap),
       SizedBox(
           width: 100,
           child: TextField(

@@ -35,22 +35,27 @@ class _MCalculatorState extends State<MCalculator> {
   @override
   Widget build(BuildContext context) {
     return CalculatorScaffold(
-        isSavable: grandTotalController.text.isNotEmpty &&
-            Currency.parseCents(grandTotalController.text) > 0 &&
-            tipController.text.isNotEmpty &&
-            Currency.parseCents(tipController.text) > 0,
-        onSaved: () {
-          setState(() {
-            grandTotalController.clear();
-            tipController.clear();
-            widget.mPayment.save();
-          });
-        },
-        header: "Custom",
-        body: Column(children: [
+      isSavable: grandTotalController.text.isNotEmpty &&
+          Currency.parseCents(grandTotalController.text) > 0 &&
+          tipController.text.isNotEmpty &&
+          Currency.parseCents(tipController.text) > 0,
+      onSaved: () {
+        setState(() {
+          grandTotalController.clear();
+          tipController.clear();
+          widget.mPayment.save();
+        });
+      },
+      header: "Custom",
+      step1: Column(
+        children: [
           _basedOnSection(),
-          OtherInfoSection(payment: widget.mPayment),
-        ]));
+        ],
+      ),
+      step2: Container(),
+      step3: OtherInfoSection(payment: widget.mPayment),
+      step4: Container(),
+    );
   }
 
   //==== Widgets ====

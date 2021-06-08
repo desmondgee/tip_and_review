@@ -11,8 +11,9 @@ import 'calculator_scaffold.dart';
 
 class TTCalculator extends StatefulWidget {
   final TTPayment ttPayment;
+  final void Function() refreshPage;
 
-  TTCalculator({this.ttPayment});
+  TTCalculator({this.ttPayment, this.refreshPage});
 
   @override
   _TTCalculatorState createState() => _TTCalculatorState();
@@ -37,43 +38,61 @@ class _TTCalculatorState extends State<TTCalculator> {
   @override
   Widget build(BuildContext context) {
     return CalculatorScaffold(
-        isSavable: taxedTotalController.text.isNotEmpty &&
-            Currency.parseCents(taxedTotalController.text) > 0,
-        onSaved: () {
-          setState(() {
+      isSavable: taxedTotalController.text.isNotEmpty &&
+          Currency.parseCents(taxedTotalController.text) > 0,
+      onSaved: () {
+        setState(
+          () {
             taxedTotalController.clear();
             widget.ttPayment.save();
-          });
-        },
-        header: "After Tax",
-        body: Column(children: [
-          YouPaySection(
-              formattedTip: widget.ttPayment.formattedTip(),
-              formattedGrandTotal: widget.ttPayment.formattedGrandTotal()),
+          },
+        );
+      },
+      header: "After Tax",
+      step1: Column(
+        children: [
+          // YouPaySection(
+          //   formattedTip: widget.ttPayment.formattedTip(),
+          //   formattedGrandTotal: widget.ttPayment.formattedGrandTotal(),
+          // ),
           _basedOnSection(),
-          OtherInfoSection(
-            payment: widget.ttPayment,
-          ),
-        ]));
+        ],
+      ),
+      step2: Container(),
+      step3: OtherInfoSection(
+        payment: widget.ttPayment,
+      ),
+      step4: Container(),
+    );
   }
 
   //==== Widgets ====
   Widget _basedOnSection() {
     return Section(
-      title: "Based On",
-      body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        CurrencyField(
-          label: "After Tax Total",
-          controller: taxedTotalController,
-          onChanged: (value) =>
-              setState(() => widget.ttPayment.setTaxedTotal(value)),
-        ),
-        TipScroller(
+      title: "Please Enter",
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CurrencyField(
+            label: "Total with Tax",
+            labelGap: 20,
+            controller: taxedTotalController,
+            onChanged: (value) {
+              widget.ttPayment.setTaxedTotal(value);
+              widget.refreshPage();
+            },
+          ),
+          TipScroller(
+            label: "Tip Percent",
             controller: tipController,
-            onChanged: (newIndex) => setState(() {
-                  widget.ttPayment.setTipPercentIndex(newIndex);
-                }))
-      ]),
+            onChanged: (newIndex) {
+              widget.ttPayment.setTipPercentIndex(newIndex);
+              widget.refreshPage();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

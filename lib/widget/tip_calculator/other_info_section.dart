@@ -42,7 +42,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             columnWidths: {
               0: FlexColumnWidth(3),
-              1: FlexColumnWidth(8)
+              1: FlexColumnWidth(10)
             },
             children: [
               TableRow(children: [
@@ -84,7 +84,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
               ]),
               TableRow(children: [
                 Text(
-                  "Pricing:",
+                  "Price:",
                   style: Style.labelStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -107,7 +107,7 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
               ]),
               TableRow(children: [
                 Text(
-                  "Experience:",
+                  "Service:",
                   style: Style.labelStyle,
                   textAlign: TextAlign.center,
                 ),

@@ -90,13 +90,20 @@ class _TipMainState extends State<TipMain> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+            SizedBox(
+              height: 120,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Tip & Review',
+                  style: Style.headerStyle,
+                ),
               ),
-              child: Text('The Tip Calculator App'),
             ),
             ListTile(
+              leading: Icon(Icons.calculate_outlined),
               title: Text('Tip Calculator'),
               onTap: () {
                 // Update the state of the app
@@ -108,6 +115,7 @@ class _TipMainState extends State<TipMain> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.history),
               title: Text('Payment History'),
               onTap: () {
                 // Update the state of the app

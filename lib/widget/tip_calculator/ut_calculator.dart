@@ -39,25 +39,31 @@ class _UTCalculatorState extends State<UTCalculator> {
   @override
   Widget build(BuildContext context) {
     return CalculatorScaffold(
-        isSavable: subtotalController.text.isNotEmpty &&
-            Currency.parseCents(subtotalController.text) > 0 &&
-            taxController.text.isNotEmpty &&
-            Currency.parseCents(taxController.text) > 0,
-        onSaved: () {
-          setState(() {
-            subtotalController.clear();
-            taxController.clear();
-            widget.utPayment.save();
-          });
-        },
-        header: "Before Tax",
-        body: Column(children: [
+      isSavable: subtotalController.text.isNotEmpty &&
+          Currency.parseCents(subtotalController.text) > 0 &&
+          taxController.text.isNotEmpty &&
+          Currency.parseCents(taxController.text) > 0,
+      onSaved: () {
+        setState(() {
+          subtotalController.clear();
+          taxController.clear();
+          widget.utPayment.save();
+        });
+      },
+      header: "Before Tax",
+      step1: Column(
+        children: [
           YouPaySection(
-              formattedTip: widget.utPayment.formattedTip(),
-              formattedGrandTotal: widget.utPayment.formattedGrandTotal()),
+            formattedTip: widget.utPayment.formattedTip(),
+            formattedGrandTotal: widget.utPayment.formattedGrandTotal(),
+          ),
           _basedOnSection(),
-          OtherInfoSection(payment: widget.utPayment),
-        ]));
+        ],
+      ),
+      step2: Container(),
+      step3: OtherInfoSection(payment: widget.utPayment),
+      step4: Container(),
+    );
   }
 
   //==== Widgets ====
@@ -81,6 +87,7 @@ class _UTCalculatorState extends State<UTCalculator> {
               )
             ]),
             TipScroller(
+                label: "Tip Percent",
                 controller: tipController,
                 onChanged: (newIndex) => setState(() {
                       widget.utPayment.setTipPercentIndex(newIndex);

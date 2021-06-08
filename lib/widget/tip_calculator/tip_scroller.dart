@@ -6,8 +6,9 @@ import 'package:flutterapp/model/payment.dart';
 class TipScroller extends StatefulWidget {
   final FixedExtentScrollController controller;
   final Function onChanged; // takes one argument, an integer for the new index.
+  final String label;
 
-  TipScroller({this.controller, this.onChanged});
+  TipScroller({this.controller, this.onChanged, this.label});
 
   @override
   _TipScrollerState createState() => _TipScrollerState();
@@ -33,10 +34,10 @@ class _TipScrollerState extends State<TipScroller> {
     ).toList();
 
     return Column(children: [
-      Text("After Tax Tip", style: Style.labelStyle),
+      Text(widget.label, style: Style.labelStyle),
       SizedBox(
           width: 100,
-          height: 150,
+          height: 100,
           child: CupertinoPicker(
             itemExtent: 44,
             children: dividedTipTiles,
