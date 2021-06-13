@@ -5,14 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../currency.dart';
 import '../payment.dart';
 
-class UTPayment with NotesMixin, HistoryMixin {
+class ExcludeTaxPayment with NotesMixin, HistoryMixin {
   int subtotalCents = 0;
   int taxCents = 0;
   int tipIndex = 5;
   List<Map<String, dynamic>> history;
   SharedPreferences prefs;
 
-  UTPayment({this.history, this.prefs});
+  ExcludeTaxPayment({this.history, this.prefs});
 
   double tipFraction() {
     return Currency.parsePercent(Payment.tipPercents[tipIndex]);
@@ -44,7 +44,7 @@ class UTPayment with NotesMixin, HistoryMixin {
 
   Map<String, dynamic> toJson() {
     var json = {
-      "type": "UTPayment",
+      "type": "ExcludeTaxPayment",
       "datetime": DateTime.now().millisecondsSinceEpoch,
       "subtotalCents": subtotalCents,
       "taxCents": taxCents,
@@ -69,6 +69,12 @@ class UTPayment with NotesMixin, HistoryMixin {
 
   void save() {
     saveToHistory(toJson());
+    subtotalCents = 0;
+    taxCents = 0;
+    clearNotes();
+  }
+
+  void clear() {
     subtotalCents = 0;
     taxCents = 0;
     clearNotes();

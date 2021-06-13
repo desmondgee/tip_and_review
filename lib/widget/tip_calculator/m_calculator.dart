@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
-import '../../model/payment/m_payment.dart';
+import '../../model/payment/custom_payment.dart';
 import '../../currency.dart';
 import 'calculator_scaffold.dart';
 
 class MCalculator extends StatefulWidget {
-  final MPayment mPayment;
+  final CustomPayment customPayment;
 
-  MCalculator({this.mPayment});
+  MCalculator({this.customPayment});
 
   @override
   _MCalculatorState createState() => _MCalculatorState();
@@ -27,8 +27,8 @@ class _MCalculatorState extends State<MCalculator> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      grandTotalController.text = widget.mPayment.formattedGrandTotal();
-      tipController.text = widget.mPayment.formattedTip();
+      grandTotalController.text = widget.customPayment.formattedGrandTotal();
+      tipController.text = widget.customPayment.formattedTip();
     });
   }
 
@@ -43,7 +43,7 @@ class _MCalculatorState extends State<MCalculator> {
         setState(() {
           grandTotalController.clear();
           tipController.clear();
-          widget.mPayment.save();
+          widget.customPayment.save();
         });
       },
       header: "Custom",
@@ -53,7 +53,7 @@ class _MCalculatorState extends State<MCalculator> {
         ],
       ),
       step2: Container(),
-      step3: OtherInfoSection(payment: widget.mPayment),
+      step3: OtherInfoSection(payment: widget.customPayment),
       step4: Container(),
     );
   }
@@ -68,13 +68,13 @@ class _MCalculatorState extends State<MCalculator> {
               label: "Total",
               controller: grandTotalController,
               onChanged: (value) =>
-                  setState(() => widget.mPayment.setGrandTotal(value)),
+                  setState(() => widget.customPayment.setGrandTotal(value)),
             ),
             CurrencyField(
               label: "Tip",
               controller: tipController,
               onChanged: (value) =>
-                  setState(() => widget.mPayment.setTip(value)),
+                  setState(() => widget.customPayment.setTip(value)),
             )
           ]),
         ]));

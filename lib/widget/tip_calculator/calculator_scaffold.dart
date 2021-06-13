@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../style.dart';
 
+// Cannot pass a stateful widget into another widget b/c the
+// passed widget will never get rebuilt since its saved to a variable.
+// Will need to use a different state management such as notifier.
 class CalculatorScaffold extends StatefulWidget {
   final bool isSavable;
   final Function onSaved;
@@ -29,6 +32,7 @@ class _CalculatorScaffoldState extends State<CalculatorScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    print("CalculatorScaffold build");
     return Scaffold(
       backgroundColor: Style.backgroundColor,
       // floatingActionButton: widget.isSavable

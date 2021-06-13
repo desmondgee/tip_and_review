@@ -5,14 +5,14 @@ import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/section.dart';
 import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
-import '../../model/payment/ut_payment.dart';
+import '../../model/payment/exclude_tax_payment.dart';
 import '../../currency.dart';
 import 'calculator_scaffold.dart';
 
 class UTCalculator extends StatefulWidget {
-  final UTPayment utPayment;
+  final ExcludeTaxPayment excludeTaxPayment;
 
-  UTCalculator({this.utPayment});
+  UTCalculator({this.excludeTaxPayment});
 
   @override
   _UTCalculatorState createState() => _UTCalculatorState();
@@ -30,9 +30,9 @@ class _UTCalculatorState extends State<UTCalculator> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      subtotalController.text = widget.utPayment.formattedSubtotal();
-      taxController.text = widget.utPayment.formattedTax();
-      tipController.jumpToItem(widget.utPayment.tipIndex);
+      subtotalController.text = widget.excludeTaxPayment.formattedSubtotal();
+      taxController.text = widget.excludeTaxPayment.formattedTax();
+      tipController.jumpToItem(widget.excludeTaxPayment.tipIndex);
     });
   }
 
@@ -47,21 +47,21 @@ class _UTCalculatorState extends State<UTCalculator> {
         setState(() {
           subtotalController.clear();
           taxController.clear();
-          widget.utPayment.save();
+          widget.excludeTaxPayment.save();
         });
       },
       header: "Before Tax",
       step1: Column(
         children: [
           YouPaySection(
-            formattedTip: widget.utPayment.formattedTip(),
-            formattedGrandTotal: widget.utPayment.formattedGrandTotal(),
+            formattedTip: widget.excludeTaxPayment.formattedTip(),
+            formattedGrandTotal: widget.excludeTaxPayment.formattedGrandTotal(),
           ),
           _basedOnSection(),
         ],
       ),
       step2: Container(),
-      step3: OtherInfoSection(payment: widget.utPayment),
+      step3: OtherInfoSection(payment: widget.excludeTaxPayment),
       step4: Container(),
     );
   }
@@ -77,20 +77,20 @@ class _UTCalculatorState extends State<UTCalculator> {
                 label: "Subtotal",
                 controller: subtotalController,
                 onChanged: (value) =>
-                    setState(() => widget.utPayment.setSubtotal(value)),
+                    setState(() => widget.excludeTaxPayment.setSubtotal(value)),
               ),
               CurrencyField(
                 label: "Tax",
                 controller: taxController,
                 onChanged: (value) =>
-                    setState(() => widget.utPayment.setTax(value)),
+                    setState(() => widget.excludeTaxPayment.setTax(value)),
               )
             ]),
             TipScroller(
                 label: "Tip Percent",
                 controller: tipController,
                 onChanged: (newIndex) => setState(() {
-                      widget.utPayment.setTipPercentIndex(newIndex);
+                      widget.excludeTaxPayment.setTipPercentIndex(newIndex);
                     }))
           ]),
         ]));

@@ -4,14 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../currency.dart';
 
-class MPayment with NotesMixin, HistoryMixin {
+class CustomPayment with NotesMixin, HistoryMixin {
   int tipCents = 0;
   int grandTotalCents = 0;
   int tipIndex = 5;
   List<Map<String, dynamic>> history;
   SharedPreferences prefs;
 
-  MPayment({this.history, this.prefs});
+  CustomPayment({this.history, this.prefs});
 
   String formattedTip() {
     return Currency.formatCents(tipCents);
@@ -23,7 +23,7 @@ class MPayment with NotesMixin, HistoryMixin {
 
   Map<String, dynamic> toJson() {
     var json = {
-      "type": "MPayment",
+      "type": "CustomPayment",
       "datetime": DateTime.now().millisecondsSinceEpoch,
       "grandTotalCents": grandTotalCents,
       "tipCents": tipCents
@@ -42,6 +42,12 @@ class MPayment with NotesMixin, HistoryMixin {
 
   void save() {
     saveToHistory(toJson());
+    grandTotalCents = 0;
+    tipCents = 0;
+    clearNotes();
+  }
+
+  void clear() {
     grandTotalCents = 0;
     tipCents = 0;
     clearNotes();

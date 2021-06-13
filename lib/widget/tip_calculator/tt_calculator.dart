@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/model/payment/include_tax_payment.dart';
 import 'package:flutterapp/widget/currency_field.dart';
 import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
-import 'package:flutterapp/widget/tip_calculator/you_pay_section.dart';
-import '../../model/payment/tt_payment.dart';
 import '../../currency.dart';
 import '../section.dart';
 import 'calculator_scaffold.dart';
 
 class TTCalculator extends StatefulWidget {
-  final TTPayment ttPayment;
+  final IncludeTaxPayment includeTaxPayment;
   final void Function() refreshPage;
 
-  TTCalculator({this.ttPayment, this.refreshPage});
+  TTCalculator({this.includeTaxPayment, this.refreshPage});
 
   @override
   _TTCalculatorState createState() => _TTCalculatorState();
@@ -29,14 +28,19 @@ class _TTCalculatorState extends State<TTCalculator> {
   void initState() {
     super.initState();
 
+    print("TTCalculator initState");
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      taxedTotalController.text = widget.ttPayment.formattedTaxedTotal();
-      tipController.jumpToItem(widget.ttPayment.tipIndex);
+      taxedTotalController.text =
+          widget.includeTaxPayment.formattedTaxedTotal();
+      print("Jumping to: " + widget.includeTaxPayment.tipIndex.toString());
+      tipController.jumpToItem(widget.includeTaxPayment.tipIndex);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("TTCalculator build");
     return CalculatorScaffold(
       isSavable: taxedTotalController.text.isNotEmpty &&
           Currency.parseCents(taxedTotalController.text) > 0,
@@ -44,7 +48,7 @@ class _TTCalculatorState extends State<TTCalculator> {
         setState(
           () {
             taxedTotalController.clear();
-            widget.ttPayment.save();
+            widget.includeTaxPayment.save();
           },
         );
       },
@@ -52,15 +56,15 @@ class _TTCalculatorState extends State<TTCalculator> {
       step1: Column(
         children: [
           // YouPaySection(
-          //   formattedTip: widget.ttPayment.formattedTip(),
-          //   formattedGrandTotal: widget.ttPayment.formattedGrandTotal(),
+          //   formattedTip: widget.includeTaxPayment.formattedTip(),
+          //   formattedGrandTotal: widget.includeTaxPayment.formattedGrandTotal(),
           // ),
           _basedOnSection(),
         ],
       ),
       step2: Container(),
       step3: OtherInfoSection(
-        payment: widget.ttPayment,
+        payment: widget.includeTaxPayment,
       ),
       step4: Container(),
     );
@@ -79,7 +83,7 @@ class _TTCalculatorState extends State<TTCalculator> {
             labelGap: 20,
             controller: taxedTotalController,
             onChanged: (value) {
-              widget.ttPayment.setTaxedTotal(value);
+              widget.includeTaxPayment.setTaxedTotal(value);
               widget.refreshPage();
             },
           ),
@@ -87,7 +91,7 @@ class _TTCalculatorState extends State<TTCalculator> {
             label: "Tip Percent",
             controller: tipController,
             onChanged: (newIndex) {
-              widget.ttPayment.setTipPercentIndex(newIndex);
+              widget.includeTaxPayment.setTipPercentIndex(newIndex);
               widget.refreshPage();
             },
           ),

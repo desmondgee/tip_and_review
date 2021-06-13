@@ -4,12 +4,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/model/payment/m_payment.dart';
-import 'package:flutterapp/model/payment/tt_payment.dart';
-import 'package:flutterapp/model/payment/ut_payment.dart';
+import 'package:flutterapp/model/calculator_model.dart';
+import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/style.dart';
 import 'package:flutterapp/widget/payment_history.dart';
 import 'package:flutterapp/widget/tip_calculator.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -61,9 +61,6 @@ class _TipMainState extends State<TipMain> {
       String encodedHistory = prefs.getString("history") ?? "[]";
       setState(() {
         history = jsonDecode(encodedHistory).cast<Map<String, dynamic>>();
-        ttPayment = TTPayment(history: history, prefs: prefs);
-        utPayment = UTPayment(history: history, prefs: prefs);
-        mPayment = MPayment(history: history, prefs: prefs);
         prefsLoaded = true;
       });
     });
@@ -73,60 +70,68 @@ class _TipMainState extends State<TipMain> {
   Widget build(BuildContext context) {
     if (!prefsLoaded) return _spinner();
 
-    Widget body = navigationIndex == 0
-        ? TipCalculator(
-            ttPayment: ttPayment, utPayment: utPayment, mPayment: mPayment)
-        : PaymentHistory(history, prefs);
+    var calculatorModel = CalculatorModel(history: history, prefs: prefs);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(navigationTitles[navigationIndex])),
-      body: body,
-      backgroundColor: Style.backgroundColor,
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            SizedBox(
-              height: 120,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Tip & Review',
-                  style: Style.headerStyle,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => calculatorModel),
+        ChangeNotifierProvider(create: (context) => calculatorModel.modeModel),
+        ChangeNotifierProvider(
+            create: (context) => calculatorModel.summaryModel),
+        ChangeNotifierProvider(create: (context) => CalculatorStepModel()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(title: Text(navigationTitles[navigationIndex])),
+        body: navigationIndex == 0
+            ? TipCalculator()
+            : PaymentHistory(history, prefs),
+        backgroundColor: Style.backgroundColor,
+        drawer: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              SizedBox(
+                height: 120,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Text(
+                    'Tip & Review',
+                    style: Style.headerStyle,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.calculate_outlined),
-              title: Text('Tip Calculator'),
-              onTap: () {
-                // Update the state of the app
-                setState(() {
-                  navigationIndex = 0;
-                });
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text('Payment History'),
-              onTap: () {
-                // Update the state of the app
-                setState(() {
-                  navigationIndex = 1;
-                });
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.calculate_outlined),
+                title: Text('Tip Calculator'),
+                onTap: () {
+                  // Update the state of the app
+                  setState(() {
+                    navigationIndex = 0;
+                  });
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.history),
+                title: Text('Payment History'),
+                onTap: () {
+                  // Update the state of the app
+                  setState(() {
+                    navigationIndex = 1;
+                  });
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
