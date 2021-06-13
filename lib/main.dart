@@ -5,7 +5,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/model/calculator_model.dart';
-import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/style.dart';
 import 'package:flutterapp/widget/payment_history.dart';
 import 'package:flutterapp/widget/tip_calculator.dart';
@@ -45,10 +44,6 @@ class _TipMainState extends State<TipMain> {
   bool prefsLoaded = false;
   SharedPreferences prefs;
 
-  var ttPayment;
-  var utPayment;
-  var mPayment;
-
   var navigationTitles = ["Tip Calculator", "Payment History"];
 
   //==== Overrides ====
@@ -70,7 +65,8 @@ class _TipMainState extends State<TipMain> {
   Widget build(BuildContext context) {
     if (!prefsLoaded) return _spinner();
 
-    var calculatorModel = CalculatorModel(history: history, prefs: prefs);
+    var calculatorModel =
+        CalculatorModel(history: history, prefs: prefs, context: context);
 
     return MultiProvider(
       providers: [
@@ -78,7 +74,7 @@ class _TipMainState extends State<TipMain> {
         ChangeNotifierProvider(create: (context) => calculatorModel.modeModel),
         ChangeNotifierProvider(
             create: (context) => calculatorModel.summaryModel),
-        ChangeNotifierProvider(create: (context) => CalculatorStepModel()),
+        ChangeNotifierProvider(create: (context) => calculatorModel.stepModel),
       ],
       child: Scaffold(
         appBar: AppBar(title: Text(navigationTitles[navigationIndex])),

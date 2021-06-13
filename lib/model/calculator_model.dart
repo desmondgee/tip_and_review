@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/model/calculator_summary_model.dart';
 import 'package:flutterapp/model/tip_mode_model.dart';
 import 'package:flutterapp/model/payment/custom_payment.dart';
@@ -13,11 +14,13 @@ class CalculatorModel extends ChangeNotifier {
   ExcludeTaxPayment excludeTaxPayment;
   CustomPayment customPayment;
   CalculatorSummaryModel summaryModel = CalculatorSummaryModel();
+  CalculatorStepModel stepModel = CalculatorStepModel();
   TipModeModel modeModel;
   List<Map<String, dynamic>> history;
   SharedPreferences prefs;
+  BuildContext context;
 
-  CalculatorModel({this.history, this.prefs}) {
+  CalculatorModel({this.history, this.prefs, this.context}) {
     modeModel = TipModeModel(prefs: prefs);
     includeTaxPayment = IncludeTaxPayment(history: history, prefs: prefs);
     excludeTaxPayment = ExcludeTaxPayment(history: history, prefs: prefs);
@@ -143,6 +146,10 @@ class CalculatorModel extends ChangeNotifier {
     excludeTaxPayment.clear();
     customPayment.clear();
 
-    // TODO: Need to add step model so we can go back to step 1.
+    stepModel.setStep(0);
+
+    final snackBar = SnackBar(content: Text("Payment saved to history"));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

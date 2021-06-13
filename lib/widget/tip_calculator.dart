@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/model/calculator_summary_model.dart';
 import 'package:flutterapp/model/tip_mode_model.dart';
-import 'package:flutterapp/style.dart';
 import 'package:provider/provider.dart';
 
 class TipCalculator extends StatefulWidget {
