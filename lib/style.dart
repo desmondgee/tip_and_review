@@ -10,6 +10,15 @@ class Style {
     height: 2,
   );
 
+  static final redLabelStyle = TextStyle(
+    color: Colors.red,
+    fontWeight: FontWeight.w800,
+    fontFamily: 'Roboto',
+    letterSpacing: 0.5,
+    fontSize: 16,
+    height: 2,
+  );
+
   static final textStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.normal,

@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutterapp/currency.dart';
 
 class CalculatorSummaryModel extends ChangeNotifier {
-  String formattedGrandTotal = "\$0.00";
-  String formattedTip = "\$0.00";
+  int grandTotalCents = 0;
+  int tipCents = 0;
+
+  String get formattedGrandTotal => Currency.formatCents(grandTotalCents);
+  String get formattedTip => Currency.formatCents(tipCents);
 
   void update({newFormattedGrandTotal, newFormattedTip}) {
-    formattedGrandTotal = newFormattedGrandTotal;
-    formattedTip = newFormattedTip;
+    grandTotalCents = Currency.parseCents(newFormattedGrandTotal);
+    tipCents = Currency.parseCents(newFormattedTip);
     notifyListeners();
   }
 

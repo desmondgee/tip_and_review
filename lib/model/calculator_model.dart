@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/model/calculator_summary_model.dart';
+import 'package:flutterapp/model/split_model.dart';
 import 'package:flutterapp/model/tip_mode_model.dart';
 import 'package:flutterapp/model/payment/custom_payment.dart';
 import 'package:flutterapp/model/payment/include_tax_payment.dart';
@@ -16,12 +17,14 @@ class CalculatorModel extends ChangeNotifier {
   CalculatorSummaryModel summaryModel = CalculatorSummaryModel();
   CalculatorStepModel stepModel = CalculatorStepModel();
   TipModeModel modeModel;
+  SplitModel splitModel;
   List<Map<String, dynamic>> history;
   SharedPreferences prefs;
   BuildContext context;
 
   CalculatorModel({this.history, this.prefs, this.context}) {
     modeModel = TipModeModel(prefs: prefs);
+    splitModel = SplitModel(modeModel: modeModel, summaryModel: summaryModel);
     includeTaxPayment = IncludeTaxPayment(history: history, prefs: prefs);
     excludeTaxPayment = ExcludeTaxPayment(history: history, prefs: prefs);
     customPayment = CustomPayment(history: history, prefs: prefs);

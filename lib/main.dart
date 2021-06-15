@@ -4,6 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/model/action_button_model.dart';
 import 'package:flutterapp/model/calculator_model.dart';
 import 'package:flutterapp/style.dart';
 import 'package:flutterapp/widget/payment_history.dart';
@@ -75,6 +76,8 @@ class _TipMainState extends State<TipMain> {
         ChangeNotifierProvider(
             create: (context) => calculatorModel.summaryModel),
         ChangeNotifierProvider(create: (context) => calculatorModel.stepModel),
+        ChangeNotifierProvider(create: (context) => calculatorModel.splitModel),
+        ChangeNotifierProvider(create: (context) => ActionButtonModel()),
       ],
       child: Scaffold(
         appBar: AppBar(title: Text(navigationTitles[navigationIndex])),
@@ -82,6 +85,17 @@ class _TipMainState extends State<TipMain> {
             ? TipCalculator()
             : PaymentHistory(history, prefs),
         backgroundColor: Style.backgroundColor,
+        floatingActionButton: Consumer<ActionButtonModel>(
+          builder: (context, buttonModel, _) => AnimatedSwitcher(
+            duration: Duration(seconds: 1),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(child: child, scale: animation);
+            },
+            switchInCurve: Curves.elasticOut,
+            switchOutCurve: Curves.easeInOutBack,
+            child: buttonModel.widget,
+          ),
+        ),
         drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
@@ -102,18 +116,20 @@ class _TipMainState extends State<TipMain> {
                   ),
                 ),
               ),
-              ListTile(
-                leading: Icon(Icons.calculate_outlined),
-                title: Text('Tip Calculator'),
-                onTap: () {
-                  // Update the state of the app
-                  setState(() {
-                    navigationIndex = 0;
-                  });
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
+              Dismissible(
+                  key: ValueKey<int>(0),
+                  child: ListTile(
+                    leading: Icon(Icons.calculate_outlined),
+                    title: Text('Tip Calculator'),
+                    onTap: () {
+                      // Update the state of the app
+                      setState(() {
+                        navigationIndex = 0;
+                      });
+                      // Then close the drawer
+                      Navigator.pop(context);
+                    },
+                  )),
               ListTile(
                 leading: Icon(Icons.history),
                 title: Text('Payment History'),

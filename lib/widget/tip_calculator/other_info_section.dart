@@ -57,7 +57,8 @@ class _OtherInfoSectionState extends State<OtherInfoSection> {
                   style: Style.labelStyle,
                   textAlign: TextAlign.right,
                   onChanged: (value) => widget.payment.location = value,
-                )
+                ),
+                // Icon(Icons.edit_outlined),
               ]),
               TableRow(children: [
                 Text(

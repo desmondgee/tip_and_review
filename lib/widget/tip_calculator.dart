@@ -53,7 +53,7 @@ class TipCalculatorState extends State<TipCalculator> {
           ],
         ),
         SizedBox(
-          height: 100,
+          height: 74,
           child: Consumer3<CalculatorStepModel, CalculatorSummaryModel,
               TipModeModel>(
             builder: (context, stepModel, summaryModel, modeModel, child) =>
@@ -80,6 +80,9 @@ class TipCalculatorState extends State<TipCalculator> {
                 Step(
                   title: Text('Split'),
                   subtitle: const Text('Optional'),
+                  state: summaryModel.savable
+                      ? StepState.indexed
+                      : StepState.disabled,
                   isActive: stepModel.step == 1,
                   content: SizedBox(height: 10),
                 ),
@@ -104,8 +107,6 @@ class TipCalculatorState extends State<TipCalculator> {
         ),
         Consumer2<CalculatorStepModel, TipModeModel>(
           builder: (context, stepModel, modeModel, child) {
-            print(stepModel.step);
-            print(modeModel.mode);
             switch (stepModel.step) {
               case 1:
                 return modeModel.widgets.step2(context);
