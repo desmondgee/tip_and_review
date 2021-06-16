@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutterapp/model/action_button_model.dart';
 import 'package:flutterapp/model/calculator_model.dart';
 import 'package:flutterapp/model/calculator_steps.dart';
+import 'package:flutterapp/model/payment/notes_mixin.dart';
 import 'package:flutterapp/widget/currency_field.dart';
+import 'package:flutterapp/widget/factory/split_step.dart';
+import 'package:flutterapp/widget/factory/summary_step.dart';
 import 'package:flutterapp/widget/section.dart';
+import 'package:flutterapp/widget/tip_calculator/other_info_section.dart';
 import 'package:flutterapp/widget/tip_calculator/tip_scroller.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +24,11 @@ class ExcludeTaxModeSteps implements CalculatorSteps {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
+        Provider.of<ActionButtonModel>(
+          context,
+          listen: false,
+        ).clear();
+
         subtotalController.text =
             calculatorModel.excludeTaxPayment.formattedSubtotal();
         taxController.text = calculatorModel.excludeTaxPayment.formattedTax();
@@ -57,15 +67,20 @@ class ExcludeTaxModeSteps implements CalculatorSteps {
     );
   }
 
-  Widget step2(BuildContext context) {
-    return Container();
-  }
+  Widget step2(BuildContext context) => SplitStep.widget(context);
 
   Widget step3(BuildContext context) {
-    return Container();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Provider.of<ActionButtonModel>(
+        context,
+        listen: false,
+      ).clear();
+    });
+
+    NotesMixin payment =
+        Provider.of<CalculatorModel>(context, listen: false).excludeTaxPayment;
+    return OtherInfoSection(payment: payment);
   }
 
-  Widget step4(BuildContext context) {
-    return Container();
-  }
+  Widget step4(BuildContext context) => SummaryStep.widget(context);
 }

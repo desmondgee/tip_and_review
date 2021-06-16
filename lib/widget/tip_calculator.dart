@@ -25,7 +25,7 @@ class TipCalculatorState extends State<TipCalculator> {
                 Icon(Icons.credit_card),
                 SizedBox(width: 5),
                 Consumer2<CalculatorSummaryModel, TipModeModel>(
-                  builder: (context, summaryModel, _, child) => Text(
+                  builder: (context, summaryModel, modeModel, child) => Text(
                     Currency.formatCents(
                       summaryModel.grandTotalCents(),
                     ),
@@ -54,6 +54,10 @@ class TipCalculatorState extends State<TipCalculator> {
                             iconSize: 24,
                             elevation: 16,
                             onChanged: (String newValue) {
+                              Provider.of<CalculatorStepModel>(
+                                context,
+                                listen: false,
+                              ).setStep(0);
                               modeModel.setLabel(newValue);
                             },
                             items: modeModel.dropdownItems))

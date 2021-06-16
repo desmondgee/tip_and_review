@@ -102,8 +102,8 @@ class CalculatorModel extends ChangeNotifier {
         break;
       case TipMode.exclude_tax:
         excludeTaxPayment.setTipPercentIndex(newIndex);
-        summaryModel.setGrandTotalCents(includeTaxPayment.grandTotalCents());
-        summaryModel.setTipCents(includeTaxPayment.tipCents());
+        summaryModel.setGrandTotalCents(excludeTaxPayment.grandTotalCents());
+        summaryModel.setTipCents(excludeTaxPayment.tipCents());
         break;
       case TipMode.custom:
         break;
