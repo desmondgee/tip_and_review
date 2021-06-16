@@ -14,7 +14,7 @@ class CalculatorModel extends ChangeNotifier {
   IncludeTaxPayment includeTaxPayment;
   ExcludeTaxPayment excludeTaxPayment;
   CustomPayment customPayment;
-  CalculatorSummaryModel summaryModel = CalculatorSummaryModel();
+  CalculatorSummaryModel summaryModel;
   CalculatorStepModel stepModel = CalculatorStepModel();
   TipModeModel modeModel;
   SplitModel splitModel;
@@ -24,6 +24,7 @@ class CalculatorModel extends ChangeNotifier {
 
   CalculatorModel({this.history, this.prefs, this.context}) {
     modeModel = TipModeModel(prefs: prefs);
+    summaryModel = CalculatorSummaryModel(modeModel: modeModel);
     splitModel = SplitModel(modeModel: modeModel, summaryModel: summaryModel);
     includeTaxPayment = IncludeTaxPayment(history: history, prefs: prefs);
     excludeTaxPayment = ExcludeTaxPayment(history: history, prefs: prefs);
@@ -76,38 +77,33 @@ class CalculatorModel extends ChangeNotifier {
 
   void setSubtotal(String formattedDollars) {
     excludeTaxPayment.setSubtotal(formattedDollars);
-    summaryModel.update(
-        newFormattedGrandTotal: excludeTaxPayment.formattedGrandTotal(),
-        newFormattedTip: excludeTaxPayment.formattedTip());
+    summaryModel.setGrandTotalCents(excludeTaxPayment.grandTotalCents());
+    summaryModel.setTipCents(excludeTaxPayment.tipCents());
   }
 
   void setTax(String formattedDollars) {
     excludeTaxPayment.setTax(formattedDollars);
-    summaryModel.update(
-        newFormattedGrandTotal: excludeTaxPayment.formattedGrandTotal(),
-        newFormattedTip: excludeTaxPayment.formattedTip());
+    summaryModel.setGrandTotalCents(excludeTaxPayment.grandTotalCents());
+    summaryModel.setTipCents(excludeTaxPayment.tipCents());
   }
 
   void setTaxedTotal(String formattedDollars) {
     includeTaxPayment.setTaxedTotal(formattedDollars);
-    summaryModel.update(
-        newFormattedGrandTotal: includeTaxPayment.formattedGrandTotal(),
-        newFormattedTip: includeTaxPayment.formattedTip());
+    summaryModel.setGrandTotalCents(includeTaxPayment.grandTotalCents());
+    summaryModel.setTipCents(includeTaxPayment.tipCents());
   }
 
   void setTipPercentIndex(int newIndex) {
     switch (modeModel.mode) {
       case TipMode.include_tax:
         includeTaxPayment.setTipPercentIndex(newIndex);
-        summaryModel.update(
-            newFormattedGrandTotal: includeTaxPayment.formattedGrandTotal(),
-            newFormattedTip: includeTaxPayment.formattedTip());
+        summaryModel.setGrandTotalCents(includeTaxPayment.grandTotalCents());
+        summaryModel.setTipCents(includeTaxPayment.tipCents());
         break;
       case TipMode.exclude_tax:
         excludeTaxPayment.setTipPercentIndex(newIndex);
-        summaryModel.update(
-            newFormattedGrandTotal: excludeTaxPayment.formattedGrandTotal(),
-            newFormattedTip: excludeTaxPayment.formattedTip());
+        summaryModel.setGrandTotalCents(includeTaxPayment.grandTotalCents());
+        summaryModel.setTipCents(includeTaxPayment.tipCents());
         break;
       case TipMode.custom:
         break;
@@ -116,16 +112,14 @@ class CalculatorModel extends ChangeNotifier {
 
   void setGrandTotal(String formattedDollars) {
     customPayment.setGrandTotal(formattedDollars);
-    summaryModel.update(
-        newFormattedGrandTotal: customPayment.formattedGrandTotal(),
-        newFormattedTip: customPayment.formattedTip());
+    summaryModel.setGrandTotalCents(customPayment.grandTotalCents);
+    summaryModel.setTipCents(customPayment.tipCents);
   }
 
   void setTip(String formattedDollars) {
     customPayment.setTip(formattedDollars);
-    summaryModel.update(
-        newFormattedGrandTotal: customPayment.formattedGrandTotal(),
-        newFormattedTip: customPayment.formattedTip());
+    summaryModel.setGrandTotalCents(customPayment.grandTotalCents);
+    summaryModel.setTipCents(customPayment.tipCents);
   }
 
   void save() {

@@ -1,20 +1,44 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutterapp/currency.dart';
+import 'package:flutterapp/model/tip_mode_model.dart';
 
 class CalculatorSummaryModel extends ChangeNotifier {
-  int grandTotalCents = 0;
-  int tipCents = 0;
+  final Map<TipMode, CalculatorSummary> summaries = {};
+  final TipModeModel modeModel;
 
-  String get formattedGrandTotal => Currency.formatCents(grandTotalCents);
-  String get formattedTip => Currency.formatCents(tipCents);
+  CalculatorSummaryModel({this.modeModel});
 
-  void update({newFormattedGrandTotal, newFormattedTip}) {
-    grandTotalCents = Currency.parseCents(newFormattedGrandTotal);
-    tipCents = Currency.parseCents(newFormattedTip);
+  CalculatorSummary summary() {
+    if (summaries[modeModel.mode] == null) {
+      summaries[modeModel.mode] = CalculatorSummary();
+    }
+
+    return summaries[modeModel.mode];
+  }
+
+  int grandTotalCents() {
+    return summary().grandTotalCents;
+  }
+
+  int tipCents() {
+    return summary().tipCents;
+  }
+
+  void setTipCents(int newTipCents) {
+    summary().tipCents = newTipCents;
+    notifyListeners();
+  }
+
+  void setGrandTotalCents(int newGrandTotalCents) {
+    summary().grandTotalCents = newGrandTotalCents;
     notifyListeners();
   }
 
   bool get savable {
-    return formattedGrandTotal != "\$0.00";
+    return summary().grandTotalCents > 0;
   }
+}
+
+class CalculatorSummary {
+  int grandTotalCents = 0;
+  int tipCents = 0;
 }

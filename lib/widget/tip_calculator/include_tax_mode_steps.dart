@@ -317,7 +317,7 @@ class IncludeTaxModeSteps implements CalculatorSteps {
                 ),
                 Consumer<CalculatorSummaryModel>(
                   builder: (context, summaryModel, child) => Text(
-                    summaryModel.formattedTip,
+                    Currency.formatCents(summaryModel.tipCents()),
                     textAlign: TextAlign.right,
                     style: Style.labelStyle,
                   ),
@@ -331,7 +331,7 @@ class IncludeTaxModeSteps implements CalculatorSteps {
                 ),
                 Consumer<CalculatorSummaryModel>(
                   builder: (context, summaryModel, child) => Text(
-                    summaryModel.formattedGrandTotal,
+                    Currency.formatCents(summaryModel.grandTotalCents()),
                     textAlign: TextAlign.right,
                     style: Style.labelStyle,
                   ),

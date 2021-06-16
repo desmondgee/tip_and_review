@@ -9,8 +9,9 @@ class SplitModel extends ChangeNotifier {
   CalculatorSummaryModel summaryModel;
   int subtotalCents = 0;
 
-// TODO: Should not take either of these. When switching tip modes, split list will be incorrect.
-// Similarly, if calculator summary changes, payment amounts will be incorrect.
+  // modeModel is consumed for display steps which includes split step
+  // which makes passing that in here safe.
+  // todo: add consumer for summaryModel too.
   SplitModel({this.modeModel, this.summaryModel});
 
   List<Split> get splits => lists[modeModel.mode] ?? [];
@@ -68,7 +69,7 @@ class SplitModel extends ChangeNotifier {
 
   double payMultiplier() {
     if (summaryModel.grandTotalCents == null || subtotalCents == 0) return 1;
-    return summaryModel.grandTotalCents / subtotalCents;
+    return summaryModel.grandTotalCents() / subtotalCents;
   }
 
   int runningPayCents() {
@@ -84,7 +85,7 @@ class SplitModel extends ChangeNotifier {
   }
 
   int remainingPayCents() {
-    return summaryModel.grandTotalCents - runningPayCents();
+    return summaryModel.grandTotalCents() - runningPayCents();
   }
 
   int splitPayCents(Split split) {

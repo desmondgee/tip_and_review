@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/currency.dart';
 import 'package:flutterapp/model/calculator_step_model.dart';
 import 'package:flutterapp/model/calculator_summary_model.dart';
 import 'package:flutterapp/model/tip_mode_model.dart';
@@ -23,15 +24,23 @@ class TipCalculatorState extends State<TipCalculator> {
                 SizedBox(width: 10),
                 Icon(Icons.credit_card),
                 SizedBox(width: 5),
-                Consumer<CalculatorSummaryModel>(
-                    builder: (context, summaryModel, child) =>
-                        Text(summaryModel.formattedGrandTotal)),
+                Consumer2<CalculatorSummaryModel, TipModeModel>(
+                  builder: (context, summaryModel, _, child) => Text(
+                    Currency.formatCents(
+                      summaryModel.grandTotalCents(),
+                    ),
+                  ),
+                ),
                 SizedBox(width: 20),
                 Icon(Icons.room_service),
                 SizedBox(width: 5),
-                Consumer<CalculatorSummaryModel>(
-                    builder: (context, summaryModel, child) =>
-                        Text(summaryModel.formattedTip)),
+                Consumer2<CalculatorSummaryModel, TipModeModel>(
+                  builder: (context, summaryModel, _, child) => Text(
+                    Currency.formatCents(
+                      summaryModel.tipCents(),
+                    ),
+                  ),
+                ),
               ],
             ),
             Row(
