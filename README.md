@@ -1,16 +1,10 @@
-# flutterapp
+# Tip and Review App
 
-A new Flutter project.
+An app designed for mobile to allow the user to quickly calculate tips using one of three methods:
+1. A percentage based on the item subtotal.
+2. A percentage based on the item subtotal and tax.
+3. A manually entered tip amount.
 
-## Getting Started
+The user then can create splits to see how much each friend needs to pay and has the option to generate a review and save it for future reference.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Future versions will feature a fully designed UI, improved ability to do analysis on past payments, and integeration with Google Maps and Yelp.

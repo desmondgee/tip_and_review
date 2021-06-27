@@ -3,38 +3,33 @@ import 'package:flutter/services.dart';
 import 'package:flutterapp/currency.dart';
 import 'package:flutterapp/style.dart';
 
-class CurrencyField extends StatefulWidget {
+class CurrencyField extends StatelessWidget {
   final TextEditingController controller;
   final Function onChanged;
   final String label;
   final double labelGap;
+
   CurrencyField({
     this.controller,
     this.onChanged,
     this.label,
     this.labelGap: 0,
-  });
+    Key key,
+  }) : super(key: key);
 
-  @override
-  _CurrencyFieldState createState() => _CurrencyFieldState();
-}
-
-class _CurrencyFieldState extends State<CurrencyField> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      widget.label == ""
-          ? Container()
-          : Text(widget.label, style: Style.labelStyle),
-      widget.label == "" ? Container() : SizedBox(height: widget.labelGap),
+      label == "" ? Container() : Text(label, style: Style.labelStyle),
+      label == "" ? Container() : SizedBox(height: labelGap),
       SizedBox(
         width: 100,
         child: TextField(
-          controller: widget.controller,
+          controller: controller,
           keyboardType: TextInputType.number,
-          onChanged: widget.onChanged,
-          onTap: () => widget.controller.selection =
-              TextSelection.collapsed(offset: widget.controller.text.length),
+          onChanged: onChanged,
+          onTap: () => controller.selection =
+              TextSelection.collapsed(offset: controller.text.length),
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             TextInputFormatter.withFunction((oldValue, newValue) {
@@ -49,7 +44,7 @@ class _CurrencyFieldState extends State<CurrencyField> {
           decoration: InputDecoration(
               // tried prefixText but has weird issue where it only shows when field is clicked. however hintText shows when not clicked and clicked until something is typed. So you will see `$$` when clicked but nothing is typed yet.
               border: OutlineInputBorder(),
-              // labelText: widget.label,
+              // labelText: label,
               hintText: "\$0.00"),
         ),
       )
